@@ -101,11 +101,6 @@ export default function RankingVideoCard({ video, rank }: RankingVideoCardProps)
               <span className="text-sm text-gray-600 group-hover:text-gray-900 font-medium">
                 {video.channel_title}
               </span>
-              {video.is_rebranded && (
-                <span className="text-xs bg-orange-100 text-orange-700 px-2 py-1 rounded">
-                  Rebranded
-                </span>
-              )}
             </Link>
           </div>
 
@@ -116,20 +111,6 @@ export default function RankingVideoCard({ video, rank }: RankingVideoCardProps)
                 <Eye className="w-4 h-4" />
                 <span>{formatNumber(video.view_count)}</span>
               </div>
-              <div className="flex items-center gap-1">
-                <ThumbsUp className="w-4 h-4" />
-                <span>{formatNumber(video.like_count)}</span>
-              </div>
-              <div className="flex items-center gap-1">
-                <MessageCircle className="w-4 h-4" />
-                <span>{formatNumber(video.comment_count)}</span>
-              </div>
-              {video.favorite_count > 0 && (
-                <div className="flex items-center gap-1">
-                  <Star className="w-4 h-4" />
-                  <span>{formatNumber(video.favorite_count)}</span>
-                </div>
-              )}
             </div>
             
             <div className="text-xs text-gray-500">

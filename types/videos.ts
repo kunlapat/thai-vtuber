@@ -52,7 +52,7 @@ export interface VideoApiResponse<T> {
 }
 
 // Tab types for the videos page
-export type VideoTabType = 'upcoming' | 'live' | '24hr' | '3days' | '7days';
+export type VideoTabType = 'live-upcoming' | '24hr' | '3days' | '7days';
 
 // Union type for all video types
 export type Video = UpcomingVideo | LiveVideo | RankingVideo;

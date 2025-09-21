@@ -33,34 +33,51 @@ const VideoSkeleton = () => (
 );
 
 export default function VideosList({ activeTab }: VideosListProps) {
-  // Select appropriate hook based on active tab
+  // Always call all hooks at the top level
+  const liveQuery = useLiveVideos();
+  const upcomingQuery = useUpcomingVideos();
+  const ranking24hrQuery = use24HrRankingVideos();
+  const ranking3daysQuery = use3DaysRankingVideos();
+  const ranking7daysQuery = use7DaysRankingVideos();
+
+  // Select appropriate data based on active tab
   const getQueryResult = () => {
-    switch (activeTab) {
-      case 'upcoming':
-        return useUpcomingVideos();
-      case 'live':
-        return useLiveVideos();
-      case '24hr':
-        return use24HrRankingVideos();
-      case '3days':
-        return use3DaysRankingVideos();
-      case '7days':
-        return use7DaysRankingVideos();
-      default:
-        return useUpcomingVideos();
+    if (activeTab === 'live-upcoming') {
+      return {
+        data: null, // We'll handle this separately
+        isLoading: liveQuery.isLoading || upcomingQuery.isLoading,
+        error: liveQuery.error || upcomingQuery.error,
+        isError: liveQuery.isError || upcomingQuery.isError,
+        refetch: () => {
+          liveQuery.refetch();
+          upcomingQuery.refetch();
+        },
+        isFetching: liveQuery.isFetching || upcomingQuery.isFetching,
+      };
+    } else if (activeTab === '24hr') {
+      return ranking24hrQuery;
+    } else if (activeTab === '3days') {
+      return ranking3daysQuery;
+    } else if (activeTab === '7days') {
+      return ranking7daysQuery;
+    } else {
+      // Fallback
+      return liveQuery;
     }
   };
 
   const { data, isLoading, error, isError, refetch, isFetching } = getQueryResult();
   const videos = data?.result || [];
+  
+  // For combined tab, get both live and upcoming videos
+  const liveVideos = activeTab === 'live-upcoming' ? (liveQuery.data?.result || []) : [];
+  const upcomingVideos = activeTab === 'live-upcoming' ? (upcomingQuery.data?.result || []) : [];
 
   // Get tab display info
   const getTabInfo = () => {
     switch (activeTab) {
-      case 'upcoming':
-        return { title: 'Upcoming Videos', description: 'Scheduled livestreams and premieres' };
-      case 'live':
-        return { title: 'Live Videos', description: 'Currently live streams and recently ended' };
+      case 'live-upcoming':
+        return { title: 'Live & Upcoming Videos', description: 'Currently live streams and scheduled premieres' };
       case '24hr':
         return { title: '24 Hour Rankings', description: 'Most viewed videos in the last 24 hours' };
       case '3days':
@@ -114,7 +131,12 @@ export default function VideosList({ activeTab }: VideosListProps) {
     );
   }
 
-  if (!videos || videos.length === 0) {
+  // Check for empty state
+  const isEmpty = activeTab === 'live-upcoming' 
+    ? (liveVideos.length === 0 && upcomingVideos.length === 0)
+    : (!videos || videos.length === 0);
+
+  if (isEmpty) {
     return (
       <div className="text-center py-12">
         <div className="text-gray-400 mb-4">
@@ -122,7 +144,7 @@ export default function VideosList({ activeTab }: VideosListProps) {
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z" />
           </svg>
         </div>
-        <h3 className="text-lg font-semibold text-gray-700 mb-2">No {activeTab} videos found</h3>
+        <h3 className="text-lg font-semibold text-gray-700 mb-2">No {activeTab === 'live-upcoming' ? 'live or upcoming' : activeTab} videos found</h3>
         <p className="text-gray-500">Check back later for updates</p>
       </div>
     );
@@ -150,22 +172,52 @@ export default function VideosList({ activeTab }: VideosListProps) {
       </div>
 
       {/* Videos List */}
-      <div className="space-y-4">
-        {videos.map((video, index) => {
-          switch (activeTab) {
-            case 'upcoming':
-              return <UpcomingVideoCard key={video.id} video={video as UpcomingVideo} />;
-            case 'live':
-              return <LiveVideoCard key={video.id} video={video as LiveVideo} />;
-            case '24hr':
-            case '3days':
-            case '7days':
-              return <RankingVideoCard key={video.id} video={video as RankingVideo} rank={index + 1} />;
-            default:
-              return <UpcomingVideoCard key={video.id} video={video as UpcomingVideo} />;
-          }
-        })}
-      </div>
+      {activeTab === 'live-upcoming' ? (
+        <div className="space-y-8">
+          {/* Live Videos Section */}
+          {liveVideos.length > 0 && (
+            <div className="space-y-4">
+              <div className="flex items-center gap-3">
+                <h3 className="text-lg font-semibold text-gray-900">Live Now</h3>
+                <div className="flex items-center gap-2">
+                  <div className="w-2 h-2 bg-red-500 rounded-full animate-pulse"></div>
+                  <span className="text-sm text-red-600 font-medium">LIVE</span>
+                </div>
+              </div>
+              <div className="space-y-4">
+                {liveVideos.map((video) => (
+                  <LiveVideoCard key={video.id} video={video as LiveVideo} />
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* Upcoming Videos Section */}
+          {upcomingVideos.length > 0 && (
+            <div className="space-y-4">
+              <h3 className="text-lg font-semibold text-gray-900">Upcoming</h3>
+              <div className="space-y-4">
+                {upcomingVideos.map((video) => (
+                  <UpcomingVideoCard key={video.id} video={video as UpcomingVideo} />
+                ))}
+              </div>
+            </div>
+          )}
+        </div>
+      ) : (
+        <div className="space-y-4">
+          {videos.map((video, index) => {
+            switch (activeTab) {
+              case '24hr':
+              case '3days':
+              case '7days':
+                return <RankingVideoCard key={video.id} video={video as RankingVideo} rank={index + 1} />;
+              default:
+                return <UpcomingVideoCard key={video.id} video={video as UpcomingVideo} />;
+            }
+          })}
+        </div>
+      )}
     </div>
   );
 }
