@@ -10,6 +10,27 @@ export interface VTuberChannel {
   is_rebranded: boolean;
 }
 
+// Channel detail from the detail API endpoint
+export interface ChannelDetail {
+  channel_id: string;
+  title: string;
+  description: string;
+  thumbnail_icon_url: string;
+  subscribers: number;
+  views: number;
+  comments: number | null;
+  videos: number;
+  uploads: string;
+  published_at: string;
+  last_published_video_at: string;
+  updated_at: number;
+  is_rebranded: boolean;
+}
+
+export interface ChannelDetailApiResponse {
+  result: ChannelDetail;
+}
+
 export interface VTuberApiResponse {
   result: VTuberChannel[];
 }

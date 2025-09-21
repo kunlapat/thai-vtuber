@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import { useRouter } from 'next/navigation';
 import { VTuberChannel } from '@/types/vtuber';
 import { formatNumber, formatDate, isChannelActive } from '@/utils/vtuberStats';
 import { ExternalLink, Users, Eye, Calendar, RefreshCw, CheckCircle, XCircle } from 'lucide-react';
@@ -20,12 +21,25 @@ interface ChannelListProps {
 }
 
 export const ChannelList = ({ channels, startIndex = 0, subscriberRanks, sortField, sortOrder, onSort }: ChannelListProps) => {
+  const router = useRouter();
+  
   // Helper function to get the appropriate rank for a channel
   const getChannelRank = (channel: VTuberChannel, index: number): number => {
     if (!subscriberRanks) return startIndex + index + 1;
     
     const rankMap = channel.is_rebranded ? subscriberRanks.rebranded : subscriberRanks.original;
     return rankMap.get(channel.channel_id) || (startIndex + index + 1);
+  };
+  
+  // Navigate to channel page
+  const handleChannelClick = (channelId: string) => {
+    router.push(`/channel/${channelId}`);
+  };
+  
+  // Handle external link click without triggering row navigation
+  const handleExternalLinkClick = (e: React.MouseEvent, channelId: string) => {
+    e.stopPropagation();
+    window.open(`https://youtube.com/channel/${channelId}`, '_blank');
   };
 
   const SortButton = ({ field, children }: { field: SortField; children: React.ReactNode }) => (
@@ -51,7 +65,11 @@ export const ChannelList = ({ channels, startIndex = 0, subscriberRanks, sortFie
       {/* Mobile Card View */}
       <div className="md:hidden">
         {channels.map((channel, index) => (
-          <div key={channel.channel_id} className="border-b border-gray-200 last:border-b-0">
+          <div 
+            key={channel.channel_id} 
+            className="border-b border-gray-200 last:border-b-0 cursor-pointer hover:bg-blue-50 hover:border-blue-200 hover:shadow-md transition-all duration-200 ease-in-out transform hover:-translate-y-0.5"
+            onClick={() => handleChannelClick(channel.channel_id)}
+          >
             <div className="p-4">
               <div className="flex items-start gap-3">
                 <div className="flex-shrink-0">
@@ -60,7 +78,7 @@ export const ChannelList = ({ channels, startIndex = 0, subscriberRanks, sortFie
                     alt={`${channel.title} thumbnail`}
                     width={48}
                     height={48}
-                    className="w-12 h-12 rounded-full object-cover"
+                    className="w-12 h-12 rounded-full object-cover transition-transform duration-200"
                     onError={(e) => {
                       const target = e.target as HTMLImageElement;
                       if (target.src.includes('yt3.ggpht.com')) {
@@ -71,7 +89,7 @@ export const ChannelList = ({ channels, startIndex = 0, subscriberRanks, sortFie
                 </div>
                 <div className="flex-1 min-w-0">
                   <div className="flex items-start justify-between mb-2">
-                    <h4 className="text-sm font-medium text-gray-900 truncate pr-2">
+                    <h4 className="text-sm font-medium text-gray-900 truncate pr-2 hover:text-blue-700 transition-all duration-200 transform-gpu">
                       {channel.title}
                     </h4>
                     <span className="text-xs text-gray-700 flex-shrink-0">
@@ -104,15 +122,6 @@ export const ChannelList = ({ channels, startIndex = 0, subscriberRanks, sortFie
                         </span>
                       )}
                     </div>
-                    <a
-                      href={`https://youtube.com/channel/${channel.channel_id}`}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="text-blue-600 hover:text-blue-800 p-1"
-                      aria-label={`Visit ${channel.title} on YouTube`}
-                    >
-                      <ExternalLink className="w-3 h-3" />
-                    </a>
                   </div>
                 </div>
               </div>
@@ -147,26 +156,27 @@ export const ChannelList = ({ channels, startIndex = 0, subscriberRanks, sortFie
               <th className="px-6 py-3 text-left text-xs font-medium text-gray-700 uppercase tracking-wider">
                 Status
               </th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-700 uppercase tracking-wider">
-                Actions
-              </th>
             </tr>
           </thead>
           <tbody className="bg-white divide-y divide-gray-200">
             {channels.map((channel, index) => (
-              <tr key={channel.channel_id} className="hover:bg-gray-50 transition-colors">
+              <tr 
+                key={channel.channel_id} 
+                className="hover:bg-gradient-to-r hover:from-blue-50 hover:to-purple-50 hover:shadow-lg cursor-pointer hover:border-l-4 hover:border-l-blue-500"
+                onClick={() => handleChannelClick(channel.channel_id)}
+              >
                 <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-700">
                   #{getChannelRank(channel, index)}
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap">
-                  <div className="flex items-center">
-                    <div className="flex-shrink-0 h-10 w-10">
+                  <div className="flex items-center group">
+                    <div className="flex-shrink-0 h-10 w-10 relative">
                       <Image
                         src={channel.thumbnail_icon_url}
                         alt={`${channel.title} thumbnail`}
                         width={40}
                         height={40}
-                        className="h-10 w-10 rounded-full object-cover"
+                        className="h-10 w-10 rounded-full object-cover group-hover:ring-2 group-hover:ring-blue-300 group-hover:ring-offset-2 group-hover:scale-110 transition-all duration-200"
                         onError={(e) => {
                           const target = e.target as HTMLImageElement;
                           if (target.src.includes('yt3.ggpht.com')) {
@@ -176,22 +186,22 @@ export const ChannelList = ({ channels, startIndex = 0, subscriberRanks, sortFie
                       />
                     </div>
                     <div className="ml-4">
-                      <div className="text-sm font-medium text-gray-900 max-w-xs truncate">
+                      <div className="text-sm font-medium text-gray-900 max-w-xs truncate group-hover:text-blue-700 group-hover:scale-105 transition-all duration-200 transform-gpu">
                         {channel.title}
                       </div>
                     </div>
                   </div>
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                  <div className="flex items-center gap-1">
-                    <Users className="w-4 h-4 text-gray-500" />
-                    {formatNumber(channel.subscribers)}
+                  <div className="flex items-center gap-1 group">
+                    <Users className="w-4 h-4 text-gray-500 group-hover:text-blue-500 transition-colors" />
+                    <span className="group-hover:font-semibold transition-all">{formatNumber(channel.subscribers)}</span>
                   </div>
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                  <div className="flex items-center gap-1">
-                    <Eye className="w-4 h-4 text-gray-500" />
-                    {formatNumber(channel.views)}
+                  <div className="flex items-center gap-1 group">
+                    <Eye className="w-4 h-4 text-gray-500 group-hover:text-purple-500 transition-colors" />
+                    <span className="group-hover:font-semibold transition-all">{formatNumber(channel.views)}</span>
                   </div>
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-700">
@@ -211,30 +221,21 @@ export const ChannelList = ({ channels, startIndex = 0, subscriberRanks, sortFie
                   )}
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap">
-                  <div className="flex flex-col gap-1">
-                    {isChannelActive(channel) ? (
-                      <span className="inline-flex items-center gap-1 px-2 py-1 bg-green-100 text-green-800 text-xs rounded-full">
-                        <CheckCircle className="w-3 h-3" />
-                        Active
-                      </span>
-                    ) : (
-                      <span className="inline-flex items-center gap-1 px-2 py-1 bg-gray-100 text-gray-600 text-xs rounded-full">
-                        <XCircle className="w-3 h-3" />
-                        Inactive
-                      </span>
-                    )}
+                  <div className="flex items-center justify-between">
+                    <div>
+                      {isChannelActive(channel) ? (
+                        <span className="inline-flex items-center gap-1 px-2 py-1 bg-green-100 text-green-800 text-xs rounded-full">
+                          <CheckCircle className="w-3 h-3" />
+                          Active
+                        </span>
+                      ) : (
+                        <span className="inline-flex items-center gap-1 px-2 py-1 bg-gray-100 text-gray-600 text-xs rounded-full">
+                          <XCircle className="w-3 h-3" />
+                          Inactive
+                        </span>
+                      )}
+                    </div>
                   </div>
-                </td>
-                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                  <a
-                    href={`https://youtube.com/channel/${channel.channel_id}`}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="text-blue-600 hover:text-blue-800 transition-colors"
-                    aria-label={`Visit ${channel.title} on YouTube`}
-                  >
-                    <ExternalLink className="w-4 h-4" />
-                  </a>
                 </td>
               </tr>
             ))}
