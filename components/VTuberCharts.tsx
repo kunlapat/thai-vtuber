@@ -16,7 +16,7 @@ import {
   Scatter,
 } from 'recharts';
 import { VTuberChannel, CustomTooltipProps, TooltipPayloadEntry } from '@/types/vtuber';
-import { formatNumber } from '@/utils/vtuberStats';
+import { formatNumber, isChannelActive } from '@/utils/vtuberStats';
 
 interface VTuberChartsProps {
   channels: VTuberChannel[];
@@ -37,17 +37,19 @@ export const VTuberCharts = ({ channels }: VTuberChartsProps) => {
         views: channel.views,
       }));
 
-    // Rebranded vs Original channels
-    const rebrandedData = [
+    // Activity Status Distribution
+    const activeChannels = channels.filter(c => isChannelActive(c)).length;
+    const inactiveChannels = channels.length - activeChannels;
+    const activityData = [
       {
-        name: 'Original',
-        value: channels.filter(c => !c.is_rebranded).length,
-        percentage: Math.round((channels.filter(c => !c.is_rebranded).length / channels.length) * 100),
+        name: 'Active (90 days)',
+        value: activeChannels,
+        percentage: Math.round((activeChannels / channels.length) * 100),
       },
       {
-        name: 'Rebranded',
-        value: channels.filter(c => c.is_rebranded).length,
-        percentage: Math.round((channels.filter(c => c.is_rebranded).length / channels.length) * 100),
+        name: 'Inactive (90+ days)',
+        value: inactiveChannels,
+        percentage: Math.round((inactiveChannels / channels.length) * 100),
       },
     ];
 
@@ -63,7 +65,7 @@ export const VTuberCharts = ({ channels }: VTuberChartsProps) => {
       .slice(0, 50); // Limit to 50 points for better performance
 
     // Activity by year
-    const activityData = channels.reduce((acc, channel) => {
+    const yearlyActivityData = channels.reduce((acc, channel) => {
       const year = new Date(channel.published_at).getFullYear();
       if (year >= 2018) {
         acc[year] = (acc[year] || 0) + 1;
@@ -71,11 +73,11 @@ export const VTuberCharts = ({ channels }: VTuberChartsProps) => {
       return acc;
     }, {} as Record<number, number>);
 
-    const yearlyActivity = Object.entries(activityData)
+    const yearlyActivity = Object.entries(yearlyActivityData)
       .map(([year, count]) => ({ year: parseInt(year), channels: count }))
       .sort((a, b) => a.year - b.year);
 
-    return { topChannels, rebrandedData, scatterData, yearlyActivity };
+    return { topChannels, activityData, scatterData, yearlyActivity };
   }, [channels]);
 
   const CustomTooltip = ({ active, payload, label }: CustomTooltipProps) => {
@@ -116,13 +118,13 @@ export const VTuberCharts = ({ channels }: VTuberChartsProps) => {
         </ResponsiveContainer>
       </div>
 
-      {/* Rebranded vs Original Pie Chart */}
+      {/* Activity Status Distribution Pie Chart */}
       <div className="bg-white p-6 rounded-lg shadow-md border border-gray-200">
-        <h3 className="text-lg font-semibold mb-4 text-gray-900">Channel Status Distribution</h3>
+        <h3 className="text-lg font-semibold mb-4 text-gray-900">Channel Activity Status</h3>
         <ResponsiveContainer width="100%" height={300}>
           <PieChart>
             <Pie
-              data={chartData.rebrandedData}
+              data={chartData.activityData}
               cx="50%"
               cy="50%"
               labelLine={false}
@@ -131,11 +133,16 @@ export const VTuberCharts = ({ channels }: VTuberChartsProps) => {
               fill="#8884d8"
               dataKey="value"
             >
-              {chartData.rebrandedData.map((entry, index) => (
+              {chartData.activityData.map((entry, index) => (
                 <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
               ))}
             </Pie>
-            <Tooltip />
+            <Tooltip 
+              formatter={(value: number, name: string) => [
+                `${value} channels`,
+                name
+              ]}
+            />
           </PieChart>
         </ResponsiveContainer>
       </div>
