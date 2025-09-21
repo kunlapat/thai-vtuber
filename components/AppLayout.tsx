@@ -16,19 +16,20 @@ export const AppLayout = ({ children }: AppLayoutProps) => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 flex">
+    <div className="min-h-screen bg-gray-50">
       <Sidebar isCollapsed={sidebarCollapsed} onToggle={toggleSidebar} />
       
       {/* Main Content */}
       <div 
         className={`
-          flex flex-col flex-1 min-h-screen
+          flex flex-col min-h-screen
           transition-all duration-300 ease-in-out
-          ${sidebarCollapsed ? 'lg:ml-16' : 'lg:ml-64'}
+          w-full
+          ${sidebarCollapsed ? 'lg:ml-16 lg:w-[calc(100vw-4rem)]' : 'lg:ml-64 lg:w-[calc(100vw-16rem)]'}
           lg:pl-0 pl-0
         `}
       >
-        <main className="flex-1 p-4 lg:p-8 pt-16 lg:pt-8">
+        <main className="flex-1 p-4 lg:p-8 pt-16 lg:pt-8 overflow-x-auto">
           {children}
         </main>
         <Footer />
