@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 import { usePathname } from 'next/navigation';
 import { 
   BarChart3, 
@@ -9,7 +10,6 @@ import {
   Menu, 
   X,
   ChevronLeft,
-  Users,
   Activity,
   Play
 } from 'lucide-react';
@@ -82,9 +82,14 @@ export const Sidebar = ({ isCollapsed, onToggle }: SidebarProps) => {
         {/* Header */}
         <div className="flex items-center justify-between p-4 border-b border-gray-200">
           {!isCollapsed && (
-            <div className="flex items-center gap-2">
-              <Users className="w-6 h-6 text-blue-600" />
-              <h1 className="text-lg font-semibold text-gray-900">Thai Vtubers</h1>
+            <div className="flex items-center gap-2 justify-center">
+              <Image 
+                src="/images/logo.jpg" 
+                alt="Thai Vtubers Logo" 
+                width={128}
+                height={128}
+                className="w-32 h-32 rounded-lg object-cover" 
+              />
             </div>
           )}
           <button
@@ -118,7 +123,17 @@ export const Sidebar = ({ isCollapsed, onToggle }: SidebarProps) => {
             isCollapsed ? 'justify-center' : ''
           }`}>
             <Activity className="w-4 h-4" />
-            {!isCollapsed && <span>Made by keRLos</span>}
+            {!isCollapsed && (
+              <Link
+                href="https://www.facebook.com/kerlosth"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="hover:underline"
+                prefetch={false}
+              >
+                Made by keRLos
+              </Link>
+            )}
           </div>
         </div>
       </div>
@@ -133,8 +148,13 @@ export const Sidebar = ({ isCollapsed, onToggle }: SidebarProps) => {
         {/* Mobile Header */}
         <div className="flex items-center justify-between p-4 border-b border-gray-200">
           <div className="flex items-center gap-2">
-            <Users className="w-6 h-6 text-blue-600" />
-            <h1 className="text-lg font-semibold text-gray-900">Thai Vtubers</h1>
+            <Image 
+              src="/images/logo.jpg" 
+              alt="Thai Vtubers Logo" 
+              width={64}
+              height={64}
+              className="w-16 h-16 rounded-lg object-cover" 
+            />
           </div>
           <button
             onClick={() => setIsMobileOpen(false)}
@@ -159,7 +179,15 @@ export const Sidebar = ({ isCollapsed, onToggle }: SidebarProps) => {
         <div className="p-4 border-t border-gray-200">
           <div className="flex items-center gap-2 text-sm text-gray-700">
             <Activity className="w-4 h-4" />
-            <span>made by keRLos</span>
+            <Link
+                href="https://www.facebook.com/kerlosth"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="hover:underline"
+                prefetch={false}
+              >
+                Made by keRLos
+              </Link>
           </div>
         </div>
       </div>
