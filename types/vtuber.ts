@@ -67,6 +67,7 @@ export interface TooltipPayloadEntry {
     subscribers?: number;
     views?: number;
     ratio?: number;
+    engagementRate?: number;
   };
 }
 

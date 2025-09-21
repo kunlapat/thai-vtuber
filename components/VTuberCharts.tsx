@@ -14,6 +14,10 @@ import {
   Cell,
   ScatterChart,
   Scatter,
+  AreaChart,
+  Area,
+  LineChart,
+  Line,
 } from 'recharts';
 import { VTuberChannel, CustomTooltipProps, TooltipPayloadEntry } from '@/types/vtuber';
 import { formatNumber, isChannelActive } from '@/utils/vtuberStats';
@@ -22,7 +26,7 @@ interface VTuberChartsProps {
   channels: VTuberChannel[];
 }
 
-const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042', '#8884d8'];
+const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042', '#8884d8', '#82ca9d', '#ffc658', '#ff7300'];
 
 export const VTuberCharts = ({ channels }: VTuberChartsProps) => {
   const chartData = useMemo(() => {
@@ -77,7 +81,107 @@ export const VTuberCharts = ({ channels }: VTuberChartsProps) => {
       .map(([year, count]) => ({ year: parseInt(year), channels: count }))
       .sort((a, b) => a.year - b.year);
 
-    return { topChannels, activityData, scatterData, yearlyActivity };
+    // Engagement Rate Distribution (Views per Subscriber)
+    const engagementRanges = [
+      { range: '0-50', min: 0, max: 50, count: 0 },
+      { range: '51-100', min: 51, max: 100, count: 0 },
+      { range: '101-200', min: 101, max: 200, count: 0 },
+      { range: '201-500', min: 201, max: 500, count: 0 },
+      { range: '501-1000', min: 501, max: 1000, count: 0 },
+      { range: '1000+', min: 1001, max: Infinity, count: 0 },
+    ];
+
+    channels.forEach(channel => {
+      if (channel.subscribers > 0) {
+        const ratio = channel.views / channel.subscribers;
+        const range = engagementRanges.find(r => ratio >= r.min && ratio <= r.max);
+        if (range) range.count++;
+      }
+    });
+
+    const engagementData = engagementRanges.map(r => ({
+      range: r.range,
+      channels: r.count,
+      percentage: Math.round((r.count / channels.length) * 100),
+    }));
+
+    // Channel Size Categories
+    const sizeCategories = [
+      { name: 'Micro (0-10K)', min: 0, max: 10000, count: 0, color: '#8884d8' },
+      { name: 'Small (10K-100K)', min: 10000, max: 100000, count: 0, color: '#82ca9d' },
+      { name: 'Medium (100K-500K)', min: 100000, max: 500000, count: 0, color: '#ffc658' },
+      { name: 'Large (500K-1M)', min: 500000, max: 1000000, count: 0, color: '#ff7300' },
+      { name: 'Mega (1M+)', min: 1000000, max: Infinity, count: 0, color: '#0088FE' },
+    ];
+
+    channels.forEach(channel => {
+      const category = sizeCategories.find(c => channel.subscribers >= c.min && channel.subscribers < c.max);
+      if (category) category.count++;
+    });
+
+    const channelSizeData = sizeCategories
+      .filter(c => c.count > 0)
+      .map(c => ({
+        name: c.name,
+        value: c.count,
+        percentage: Math.round((c.count / channels.length) * 100),
+      }));
+
+    // Growth Potential Analysis (High engagement, lower subscribers)
+    const growthPotentialChannels = channels
+      .filter(channel => channel.subscribers > 1000 && channel.subscribers < 100000)
+      .map(channel => ({
+        name: channel.title.length > 20 ? channel.title.slice(0, 20) + '...' : channel.title,
+        fullName: channel.title,
+        subscribers: channel.subscribers,
+        engagementRate: channel.views / channel.subscribers,
+        views: channel.views,
+      }))
+      .filter(channel => channel.engagementRate > 100)
+      .sort((a, b) => b.engagementRate - a.engagementRate)
+      .slice(0, 10);
+
+    // Content Freshness Timeline
+    const now = new Date();
+    const freshnessRanges = [
+      { range: '0-7 days', days: 7, count: 0 },
+      { range: '8-30 days', days: 30, count: 0 },
+      { range: '31-90 days', days: 90, count: 0 },
+      { range: '91-180 days', days: 180, count: 0 },
+      { range: '181-365 days', days: 365, count: 0 },
+      { range: '1+ years', days: Infinity, count: 0 },
+    ];
+
+    channels.forEach(channel => {
+      if (channel.last_published_video_at) {
+        const lastVideo = new Date(channel.last_published_video_at);
+        const daysSince = Math.floor((now.getTime() - lastVideo.getTime()) / (1000 * 60 * 60 * 24));
+        
+        if (daysSince <= 7) freshnessRanges[0].count++;
+        else if (daysSince <= 30) freshnessRanges[1].count++;
+        else if (daysSince <= 90) freshnessRanges[2].count++;
+        else if (daysSince <= 180) freshnessRanges[3].count++;
+        else if (daysSince <= 365) freshnessRanges[4].count++;
+        else freshnessRanges[5].count++;
+      }
+    });
+
+    const contentFreshnessData = freshnessRanges.map(r => ({
+      range: r.range,
+      channels: r.count,
+      percentage: Math.round((r.count / channels.length) * 100),
+    }));
+
+    return { 
+      topChannels, 
+      activityData, 
+      scatterData, 
+      yearlyActivity,
+      engagementData,
+      channelSizeData,
+      growthPotentialChannels,
+      contentFreshnessData
+    };
   }, [channels]);
 
   const CustomTooltip = ({ active, payload, label }: CustomTooltipProps) => {
@@ -97,7 +201,7 @@ export const VTuberCharts = ({ channels }: VTuberChartsProps) => {
   };
 
   return (
-    <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+    <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-2 gap-6">
       {/* Top Channels Bar Chart */}
       <div className="bg-white p-6 rounded-lg shadow-md border border-gray-200">
         <h3 className="text-lg font-semibold mb-4 text-gray-900">Top 10 Channels by Subscribers</h3>
@@ -120,7 +224,7 @@ export const VTuberCharts = ({ channels }: VTuberChartsProps) => {
 
       {/* Activity Status Distribution Pie Chart */}
       <div className="bg-white p-6 rounded-lg shadow-md border border-gray-200">
-        <h3 className="text-lg font-semibold mb-4 text-gray-900">Channel Activity Status</h3>
+        <h3 className="text-lg font-semibold mb-4 text-gray-900">Channel Activity Status</h3>add
         <ResponsiveContainer width="100%" height={300}>
           <PieChart>
             <Pie
@@ -199,6 +303,119 @@ export const VTuberCharts = ({ channels }: VTuberChartsProps) => {
             <Tooltip />
             <Bar dataKey="channels" fill="#FF8042" radius={[4, 4, 0, 0]} />
           </BarChart>
+        </ResponsiveContainer>
+      </div>
+
+      {/* Engagement Rate Distribution */}
+      <div className="bg-white p-6 rounded-lg shadow-md border border-gray-200">
+        <h3 className="text-lg font-semibold mb-4 text-gray-900">Engagement Rate Distribution</h3>
+        <p className="text-sm text-gray-600 mb-3">Views per subscriber ratio</p>
+        <ResponsiveContainer width="100%" height={300}>
+          <AreaChart data={chartData.engagementData} margin={{ top: 20, right: 30, left: 20, bottom: 5 }}>
+            <CartesianGrid strokeDasharray="3 3" />
+            <XAxis dataKey="range" />
+            <YAxis />
+            <Tooltip 
+              formatter={(value: number) => [`${value} channels`, 'Channels']}
+              labelFormatter={(label) => `Engagement Range: ${label}`}
+            />
+            <Area 
+              type="monotone" 
+              dataKey="channels" 
+              stroke="#8884d8" 
+              fill="#8884d8" 
+              fillOpacity={0.6}
+            />
+          </AreaChart>
+        </ResponsiveContainer>
+      </div>
+
+      {/* Channel Size Categories */}
+      <div className="bg-white p-6 rounded-lg shadow-md border border-gray-200">
+        <h3 className="text-lg font-semibold mb-4 text-gray-900">Channel Size Distribution</h3>
+        <ResponsiveContainer width="100%" height={300}>
+          <PieChart>
+            <Pie
+              data={chartData.channelSizeData}
+              cx="50%"
+              cy="50%"
+              labelLine={false}
+              label={({ name, percentage }) => `${name}: ${percentage}%`}
+              outerRadius={80}
+              fill="#8884d8"
+              dataKey="value"
+            >
+              {chartData.channelSizeData.map((entry, index) => (
+                <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+              ))}
+            </Pie>
+            <Tooltip 
+              formatter={(value: number, name: string) => [
+                `${value} channels`,
+                name
+              ]}
+            />
+          </PieChart>
+        </ResponsiveContainer>
+      </div>
+
+      {/* Growth Potential Analysis */}
+      <div className="bg-white p-6 rounded-lg shadow-md border border-gray-200">
+        <h3 className="text-lg font-semibold mb-4 text-gray-900">Growth Potential Channels</h3>
+        <p className="text-sm text-gray-600 mb-3">High engagement, under 100K subscribers</p>
+        <ResponsiveContainer width="100%" height={300}>
+          <BarChart data={chartData.growthPotentialChannels} margin={{ top: 20, right: 30, left: 20, bottom: 60 }}>
+            <CartesianGrid strokeDasharray="3 3" />
+            <XAxis
+              dataKey="name"
+              angle={-45}
+              textAnchor="end"
+              height={80}
+              fontSize={12}
+            />
+            <YAxis tickFormatter={formatNumber} />
+            <Tooltip
+              content={(props: CustomTooltipProps) => {
+                const { active, payload } = props;
+                if (active && payload && payload.length) {
+                  const data = payload[0].payload as any;
+                  return (
+                    <div className="bg-white p-3 border rounded shadow-lg">
+                      <p className="text-sm font-medium">{data.fullName}</p>
+                      <p className="text-sm">Subscribers: {formatNumber(data.subscribers || 0)}</p>
+                      <p className="text-sm">Engagement Rate: {(data.engagementRate || 0).toFixed(1)} views/sub</p>
+                    </div>
+                  );
+                }
+                return null;
+              }}
+            />
+            <Bar dataKey="engagementRate" fill="#00C49F" radius={[4, 4, 0, 0]} />
+          </BarChart>
+        </ResponsiveContainer>
+      </div>
+
+      {/* Content Freshness Timeline */}
+      <div className="bg-white p-6 rounded-lg shadow-md border border-gray-200">
+        <h3 className="text-lg font-semibold mb-4 text-gray-900">Content Freshness Timeline</h3>
+        <p className="text-sm text-gray-600 mb-3">When channels last published content</p>
+        <ResponsiveContainer width="100%" height={300}>
+          <LineChart data={chartData.contentFreshnessData} margin={{ top: 20, right: 30, left: 20, bottom: 5 }}>
+            <CartesianGrid strokeDasharray="3 3" />
+            <XAxis dataKey="range" />
+            <YAxis />
+            <Tooltip 
+              formatter={(value: number) => [`${value} channels`, 'Channels']}
+              labelFormatter={(label) => `Last Published: ${label}`}
+            />
+            <Line 
+              type="monotone" 
+              dataKey="channels" 
+              stroke="#ff7300" 
+              strokeWidth={3}
+              dot={{ fill: '#ff7300', strokeWidth: 2, r: 4 }}
+            />
+          </LineChart>
         </ResponsiveContainer>
       </div>
     </div>
