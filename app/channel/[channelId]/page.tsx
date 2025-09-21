@@ -10,6 +10,7 @@ import ChannelHeader from '@/components/ChannelHeader';
 import ChannelTabs, { TabType } from '@/components/ChannelTabs';
 import VideoGrid from '@/components/VideoGrid';
 import PlaylistSection from '@/components/PlaylistSection';
+import ChannelChart from '@/components/ChannelChart';
 
 // Loading Component
 const LoadingSpinner = () => (
@@ -72,6 +73,12 @@ export default function ChannelPage() {
       <ChannelHeader channel={channel} />
 
       <div className="max-w-7xl mx-auto px-4 md:px-6">
+        {/* Channel Chart Section */}
+        <div className="py-8">
+          <ChannelChart channelId={channelId} />
+        </div>
+        
+        {/* Videos Section */}
         <div className="py-8">
           <h2 className="text-xl font-bold text-gray-900 mb-6">
             Latest Videos

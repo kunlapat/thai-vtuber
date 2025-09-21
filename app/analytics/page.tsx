@@ -1,18 +1,35 @@
 'use client';
 
+import { useState, useMemo } from 'react';
 import { Users, Eye, TrendingUp, Activity, Loader, AlertCircle, RefreshCw } from 'lucide-react';
 import { useVTuberData } from '@/hooks/useVTuberData';
 import { calculateDashboardStats, formatNumber } from '@/utils/vtuberStats';
 import { StatCard } from '@/components/StatCard';
 import { VTuberCharts } from '@/components/VTuberCharts';
-import { useMemo } from 'react';
+import { DashboardFilters } from '@/types/vtuber';
 
 export default function Analytics() {
   const { data, isLoading, error, refetch } = useVTuberData();
+  const [filters, setFilters] = useState<DashboardFilters>({
+    search: '',
+    showOriginalVtuber: true, // Default to show only original VTubers
+    showInactive: false,      // Default to not show inactive channels
+  });
+
+  const filteredChannels = useMemo(() => {
+    if (!data?.result) return [];
+
+    return data.result.filter((channel) => {
+      // If showOriginalVtuber is true, only show original channels (is_rebranded = false)
+      // If showOriginalVtuber is false, show all channels (regardless of rebranding status)
+      const matchesRebranded = !filters.showOriginalVtuber || !channel.is_rebranded;
+      return matchesRebranded;
+    });
+  }, [data?.result, filters.showOriginalVtuber]);
 
   const stats = useMemo(() => {
-    return data?.result ? calculateDashboardStats(data.result) : null;
-  }, [data?.result]);
+    return filteredChannels.length > 0 ? calculateDashboardStats(filteredChannels) : null;
+  }, [filteredChannels]);
 
   const handleRetry = () => {
     refetch();
@@ -58,6 +75,22 @@ export default function Analytics() {
         <p className="mt-2 text-gray-600">
           Comprehensive data visualization and insights for Thai VTuber channels
         </p>
+        
+        {/* Toggle Filter */}
+        <div className="mt-4 bg-white rounded-lg shadow-sm p-4 border border-gray-200">
+          <div className="flex items-center gap-2">
+            <input
+              type="checkbox"
+              id="show-original-vtuber-analytics"
+              checked={filters.showOriginalVtuber}
+              onChange={(e) => setFilters(prev => ({ ...prev, showOriginalVtuber: e.target.checked }))}
+              className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 focus:ring-2 cursor-pointer"
+            />
+            <label htmlFor="show-original-vtuber-analytics" className="text-sm font-medium text-gray-700 cursor-pointer">
+              Show original VTuber only
+            </label>
+          </div>
+        </div>
       </div>
 
       {/* Key Metrics */}
@@ -94,10 +127,10 @@ export default function Analytics() {
       )}
 
       {/* Data Visualization */}
-      {data?.result && (
+      {filteredChannels.length > 0 && (
         <div>
           <h2 className="text-xl font-semibold text-gray-900 mb-6">Data Visualization</h2>
-          <VTuberCharts channels={data.result} />
+          <VTuberCharts channels={filteredChannels} />
         </div>
       )}
     </div>

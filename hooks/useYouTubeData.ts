@@ -2,6 +2,23 @@ import { useQuery } from '@tanstack/react-query';
 import { YouTubeFeedItem, YouTubePlaylistItem } from '@/types/youtube';
 import { ChannelDetail, ChannelDetailApiResponse } from '@/types/vtuber';
 
+// Chart data types
+export interface ChartDataPoint {
+  date: string;
+  subscribers: number;
+  views: number;
+  comments: number;
+  videos: number;
+}
+
+export interface ChartDataResponse {
+  result: {
+    id: string;
+    title: string;
+    chart_data_points: ChartDataPoint[];
+  };
+}
+
 // Hook for fetching YouTube channel videos
 export const useYouTubeChannelVideos = (channelId: string, limit: number = 10) => {
   return useQuery({
@@ -103,5 +120,39 @@ export const useChannelDetails = (channelId: string) => {
     refetchOnWindowFocus: false,
     retry: 3,
     retryDelay: (attemptIndex) => Math.min(1000 * 2 ** attemptIndex, 30000),
+  });
+};
+
+// Hook for fetching channel chart data
+export const useChannelChartData = (channelId: string) => {
+  return useQuery<ChartDataPoint[]>({
+    queryKey: ['channel-chart-data', channelId],
+    queryFn: async (): Promise<ChartDataPoint[]> => {
+      const response = await fetch(`https://storage.googleapis.com/thaivtuberranking.appspot.com/v2/channel_data/chart_data/${channelId}.json`);
+      
+      if (!response.ok) {
+        if (response.status === 404) {
+          return []; // No chart data available
+        }
+        throw new Error(`Failed to fetch chart data: ${response.statusText}`);
+      }
+      
+      const data: ChartDataResponse = await response.json();
+      console.log('Chart data response:', data);
+      
+      // Handle the expected response structure
+      if (data && data.result && Array.isArray(data.result.chart_data_points)) {
+        return data.result.chart_data_points;
+      }
+      
+      console.warn('Unexpected chart data format:', data);
+      return [];
+    },
+    enabled: !!channelId,
+    staleTime: 10 * 60 * 1000, // 10 minutes
+    gcTime: 30 * 60 * 1000, // 30 minutes
+    refetchOnWindowFocus: false,
+    retry: 2,
+    retryDelay: (attemptIndex) => Math.min(1000 * 2 ** attemptIndex, 10000),
   });
 };
