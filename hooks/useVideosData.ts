@@ -13,7 +13,7 @@ import {
 // Generic hook for fetching video data
 const useVideoData = <T>(endpoint: VideoApiEndpoint, tabType: VideoTabType) => {
   return useQuery<VideoApiResponse<T>>({
-    queryKey: ['videos', tabType],
+    queryKey: ['videos', endpoint],
     queryFn: async () => {
       const response = await fetch(endpoint);
       if (!response.ok) {
@@ -29,10 +29,8 @@ const useVideoData = <T>(endpoint: VideoApiEndpoint, tabType: VideoTabType) => {
 // Get refresh interval based on tab type
 const getRefreshInterval = (tabType: VideoTabType): number => {
   switch (tabType) {
-    case 'live':
+    case 'live-upcoming':
       return 30000; // 30 seconds for live videos
-    case 'upcoming':
-      return 300000; // 5 minutes for upcoming videos
     default:
       return 600000; // 10 minutes for rankings
   }
@@ -41,10 +39,8 @@ const getRefreshInterval = (tabType: VideoTabType): number => {
 // Get stale time based on tab type
 const getStaleTime = (tabType: VideoTabType): number => {
   switch (tabType) {
-    case 'live':
+    case 'live-upcoming':
       return 15000; // 15 seconds for live videos
-    case 'upcoming':
-      return 120000; // 2 minutes for upcoming videos
     default:
       return 300000; // 5 minutes for rankings
   }
@@ -52,11 +48,11 @@ const getStaleTime = (tabType: VideoTabType): number => {
 
 // Specific hooks for each video type
 export const useUpcomingVideos = () => {
-  return useVideoData<UpcomingVideo>(VideoApiEndpoint.UPCOMING, 'upcoming');
+  return useVideoData<UpcomingVideo>(VideoApiEndpoint.UPCOMING, 'live-upcoming');
 };
 
 export const useLiveVideos = () => {
-  return useVideoData<LiveVideo>(VideoApiEndpoint.LIVE, 'live');
+  return useVideoData<LiveVideo>(VideoApiEndpoint.LIVE, 'live-upcoming');
 };
 
 export const use24HrRankingVideos = () => {
