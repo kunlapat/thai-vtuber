@@ -1,7 +1,8 @@
 'use client';
 
 import { useState, useMemo } from 'react';
-import { Users, Eye, TrendingUp, Activity, Loader, AlertCircle, RefreshCw } from 'lucide-react';
+import Link from 'next/link';
+import { Users, Eye, TrendingUp, Activity, Loader, AlertCircle, RefreshCw, Github } from 'lucide-react';
 import { useVTuberData } from '@/hooks/useVTuberData';
 import { DashboardFilters, PaginationState } from '@/types/vtuber';
 import { SortField, SortOrder } from '@/types/pagination';
@@ -192,10 +193,15 @@ export default function Dashboard() {
             Browse and explore Thai VTuber channels
           </p>
         </div>
-        {/* <div className="flex items-center gap-2 text-sm text-gray-500">
-          <Activity className="w-4 h-4" />
-          Last updated: {new Date().toLocaleTimeString()}
-        </div> */}
+        <Link
+          href="https://github.com/kerlos/thai-vtuber"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="flex items-center gap-2 px-3 py-2 bg-black text-white hover:bg-gray-800 rounded-lg transition-colors text-sm font-medium"
+        >
+          <Github className="w-4 h-4" />
+          <span className="hidden sm:inline">Repository</span>
+        </Link>
       </div>
         {/* Quick Stats */}
         {stats && (

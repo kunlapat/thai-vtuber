@@ -80,23 +80,23 @@ export const Sidebar = ({ isCollapsed, onToggle }: SidebarProps) => {
         `}
       >
         {/* Header */}
-        <div className="flex items-center justify-between p-4 border-b border-gray-200">
-          {!isCollapsed && (
-            <div className="flex items-center gap-2 justify-center">
-              <Image 
-                src="/images/logo.jpg" 
-                alt="Thai Vtubers Logo" 
-                width={128}
-                height={128}
-                className="w-32 h-32 rounded-lg object-cover" 
-              />
-            </div>
-          )}
+        <div className={`flex items-center p-4 border-b border-gray-200 ${
+          isCollapsed ? 'flex-col gap-2' : 'justify-between'
+        }`}>
+          <div className="flex items-center gap-2 justify-center">
+            <Image 
+              src="/images/logo.jpg" 
+              alt="Thai Vtubers Logo" 
+              width={isCollapsed ? 32 : 128}
+              height={isCollapsed ? 32 : 128}
+              className={`rounded-lg object-cover transition-all duration-300 ${
+                isCollapsed ? 'w-8 h-8' : 'w-32 h-32'
+              }`}
+            />
+          </div>
           <button
             onClick={onToggle}
-            className={`p-1.5 rounded-md hover:bg-gray-100 transition-colors cursor-pointer text-gray-700 ${
-              isCollapsed ? 'mx-auto' : ''
-            }`}
+            className="p-1.5 rounded-md hover:bg-gray-100 transition-colors cursor-pointer text-gray-700"
           >
             <ChevronLeft 
               className={`w-4 h-4 transition-transform text-gray-700 cursor-pointer ${
