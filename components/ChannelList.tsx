@@ -35,12 +35,6 @@ export const ChannelList = ({ channels, startIndex = 0, subscriberRanks, sortFie
   const handleChannelClick = (channelId: string) => {
     router.push(`/channel/${channelId}`);
   };
-  
-  // Handle external link click without triggering row navigation
-  const handleExternalLinkClick = (e: React.MouseEvent, channelId: string) => {
-    e.stopPropagation();
-    window.open(`https://youtube.com/channel/${channelId}`, '_blank');
-  };
 
   const SortButton = ({ field, children }: { field: SortField; children: React.ReactNode }) => (
     <button
@@ -67,7 +61,7 @@ export const ChannelList = ({ channels, startIndex = 0, subscriberRanks, sortFie
         {channels.map((channel, index) => (
           <div 
             key={channel.channel_id} 
-            className="border-b border-gray-200 last:border-b-0 cursor-pointer hover:bg-blue-50 hover:border-blue-200 hover:shadow-md transition-all duration-200 ease-in-out transform hover:-translate-y-0.5"
+            className="border-b border-gray-200 last:border-b-0 cursor-pointer hover:bg-blue-50 hover:border-blue-200 hover:shadow-md transition-all duration-200 ease-in-out transform"
             onClick={() => handleChannelClick(channel.channel_id)}
           >
             <div className="p-4">
@@ -162,7 +156,7 @@ export const ChannelList = ({ channels, startIndex = 0, subscriberRanks, sortFie
             {channels.map((channel, index) => (
               <tr 
                 key={channel.channel_id} 
-                className="hover:bg-gradient-to-r hover:from-blue-50 hover:to-purple-50 hover:shadow-lg cursor-pointer hover:border-l-4 hover:border-l-blue-500"
+                className="hover:bg-gradient-to-r hover:from-blue-50 hover:to-purple-50 hover:shadow-lg cursor-pointer"
                 onClick={() => handleChannelClick(channel.channel_id)}
               >
                 <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-700">

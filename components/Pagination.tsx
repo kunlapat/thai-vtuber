@@ -120,7 +120,7 @@ export const Pagination = ({ pagination, onPageChange, onPageSizeChange }: Pagin
               <select
                 value={pageSize}
                 onChange={(e) => handlePageSizeChange(Number(e.target.value))}
-                className="border border-gray-300 rounded-md px-2 py-1 text-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                className="border border-gray-300 rounded-md px-2 py-1 text-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-900"
               >
                 {PAGE_SIZE_OPTIONS.map(size => (
                   <option key={size} value={size}>
@@ -138,7 +138,7 @@ export const Pagination = ({ pagination, onPageChange, onPageSizeChange }: Pagin
               <button
                 onClick={handlePreviousPage}
                 disabled={currentPage === 1}
-                className="relative inline-flex items-center px-2 py-2 rounded-l-md border border-gray-300 bg-white text-sm font-medium text-gray-700 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
+                className="cursor-pointer relative inline-flex items-center px-2 py-2 rounded-l-md border border-gray-300 bg-white text-sm font-medium text-gray-700 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 <ChevronLeft className="h-4 w-4" />
                 <span className="sr-only">Previous</span>
@@ -162,7 +162,7 @@ export const Pagination = ({ pagination, onPageChange, onPageSizeChange }: Pagin
                   <button
                     key={pageNum}
                     onClick={() => onPageChange(pageNum as number)}
-                    className={`relative inline-flex items-center px-4 py-2 border text-sm font-medium ${
+                    className={`relative inline-flex items-center px-4 py-2 border text-sm font-medium cursor-pointer ${
                       isCurrentPage
                         ? 'z-10 bg-blue-50 border-blue-500 text-blue-600'
                         : 'bg-white border-gray-300 text-gray-700 hover:bg-gray-50'
@@ -177,7 +177,7 @@ export const Pagination = ({ pagination, onPageChange, onPageSizeChange }: Pagin
               <button
                 onClick={handleNextPage}
                 disabled={currentPage === totalPages}
-                className="relative inline-flex items-center px-2 py-2 rounded-r-md border border-gray-300 bg-white text-sm font-medium text-gray-700 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
+                className="cursor-pointer relative inline-flex items-center px-2 py-2 rounded-r-md border border-gray-300 bg-white text-sm font-medium text-gray-700 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 <ChevronRight className="h-4 w-4" />
                 <span className="sr-only">Next</span>

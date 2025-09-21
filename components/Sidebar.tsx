@@ -10,7 +10,8 @@ import {
   X,
   ChevronLeft,
   Users,
-  Activity
+  Activity,
+  Play
 } from 'lucide-react';
 
 interface SidebarProps {
@@ -24,6 +25,7 @@ export const Sidebar = ({ isCollapsed, onToggle }: SidebarProps) => {
 
   const navigation = [
     { name: 'Home', href: '/', icon: Home },
+    { name: 'Videos', href: '/videos', icon: Play },
     { name: 'Analytics', href: '/analytics', icon: BarChart3 },
   ];
 
@@ -82,7 +84,7 @@ export const Sidebar = ({ isCollapsed, onToggle }: SidebarProps) => {
           {!isCollapsed && (
             <div className="flex items-center gap-2">
               <Users className="w-6 h-6 text-blue-600" />
-              <h1 className="text-lg font-semibold text-gray-900">Tha Vtubers</h1>
+              <h1 className="text-lg font-semibold text-gray-900">Thai Vtubers</h1>
             </div>
           )}
           <button
@@ -116,7 +118,7 @@ export const Sidebar = ({ isCollapsed, onToggle }: SidebarProps) => {
             isCollapsed ? 'justify-center' : ''
           }`}>
             <Activity className="w-4 h-4" />
-            {!isCollapsed && <span>Thai VTuber Ranking</span>}
+            {!isCollapsed && <span>Made by keRLos</span>}
           </div>
         </div>
       </div>
@@ -132,7 +134,7 @@ export const Sidebar = ({ isCollapsed, onToggle }: SidebarProps) => {
         <div className="flex items-center justify-between p-4 border-b border-gray-200">
           <div className="flex items-center gap-2">
             <Users className="w-6 h-6 text-blue-600" />
-            <h1 className="text-lg font-semibold text-gray-900">Tha Vtubers</h1>
+            <h1 className="text-lg font-semibold text-gray-900">Thai Vtubers</h1>
           </div>
           <button
             onClick={() => setIsMobileOpen(false)}
@@ -157,7 +159,7 @@ export const Sidebar = ({ isCollapsed, onToggle }: SidebarProps) => {
         <div className="p-4 border-t border-gray-200">
           <div className="flex items-center gap-2 text-sm text-gray-700">
             <Activity className="w-4 h-4" />
-            <span>Thai VTuber Ranking</span>
+            <span>made by keRLos</span>
           </div>
         </div>
       </div>

@@ -1,0 +1,171 @@
+'use client';
+
+import { VideoTabType, UpcomingVideo, LiveVideo, RankingVideo } from '@/types/videos';
+import { 
+  useUpcomingVideos, 
+  useLiveVideos, 
+  use24HrRankingVideos, 
+  use3DaysRankingVideos, 
+  use7DaysRankingVideos 
+} from '@/hooks/useVideosData';
+import UpcomingVideoCard from './UpcomingVideoCard';
+import LiveVideoCard from './LiveVideoCard';
+import RankingVideoCard from './RankingVideoCard';
+import { RefreshCw, Wifi, WifiOff } from 'lucide-react';
+
+interface VideosListProps {
+  activeTab: VideoTabType;
+}
+
+// Loading skeleton component
+const VideoSkeleton = () => (
+  <div className="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
+    <div className="animate-pulse flex flex-col lg:flex-row">
+      <div className="lg:w-80 w-full aspect-video bg-gray-200"></div>
+      <div className="flex-1 p-4 space-y-3">
+        <div className="h-5 bg-gray-200 rounded w-3/4"></div>
+        <div className="h-4 bg-gray-200 rounded w-1/2"></div>
+        <div className="h-4 bg-gray-200 rounded w-full"></div>
+        <div className="h-4 bg-gray-200 rounded w-2/3"></div>
+      </div>
+    </div>
+  </div>
+);
+
+export default function VideosList({ activeTab }: VideosListProps) {
+  // Select appropriate hook based on active tab
+  const getQueryResult = () => {
+    switch (activeTab) {
+      case 'upcoming':
+        return useUpcomingVideos();
+      case 'live':
+        return useLiveVideos();
+      case '24hr':
+        return use24HrRankingVideos();
+      case '3days':
+        return use3DaysRankingVideos();
+      case '7days':
+        return use7DaysRankingVideos();
+      default:
+        return useUpcomingVideos();
+    }
+  };
+
+  const { data, isLoading, error, isError, refetch, isFetching } = getQueryResult();
+  const videos = data?.result || [];
+
+  // Get tab display info
+  const getTabInfo = () => {
+    switch (activeTab) {
+      case 'upcoming':
+        return { title: 'Upcoming Videos', description: 'Scheduled livestreams and premieres' };
+      case 'live':
+        return { title: 'Live Videos', description: 'Currently live streams and recently ended' };
+      case '24hr':
+        return { title: '24 Hour Rankings', description: 'Most viewed videos in the last 24 hours' };
+      case '3days':
+        return { title: '3 Day Rankings', description: 'Most viewed videos in the last 3 days' };
+      case '7days':
+        return { title: '7 Day Rankings', description: 'Most viewed videos in the last 7 days' };
+      default:
+        return { title: 'Videos', description: '' };
+    }
+  };
+
+  const { title, description } = getTabInfo();
+
+  if (isLoading) {
+    return (
+      <div className="space-y-6">
+        {/* Loading header */}
+        <div className="animate-pulse">
+          <div className="h-8 bg-gray-200 rounded w-64 mb-2"></div>
+          <div className="h-4 bg-gray-200 rounded w-96"></div>
+        </div>
+        
+        {/* Loading videos */}
+        <div className="space-y-4">
+          {Array.from({ length: 6 }).map((_, i) => (
+            <VideoSkeleton key={i} />
+          ))}
+        </div>
+      </div>
+    );
+  }
+
+  if (isError) {
+    return (
+      <div className="text-center py-12">
+        <div className="bg-red-50 border border-red-200 text-red-700 px-6 py-8 rounded-lg max-w-md mx-auto">
+          <WifiOff className="w-12 h-12 mx-auto mb-4 text-red-500" />
+          <h3 className="font-semibold mb-2">Failed to load videos</h3>
+          <p className="text-sm mb-4">
+            {error?.message || 'Unable to fetch videos at this time'}
+          </p>
+          <button
+            onClick={() => refetch()}
+            className="bg-red-600 text-white px-4 py-2 rounded-md hover:bg-red-700 transition-colors inline-flex items-center gap-2"
+          >
+            <RefreshCw className="w-4 h-4" />
+            Try Again
+          </button>
+        </div>
+      </div>
+    );
+  }
+
+  if (!videos || videos.length === 0) {
+    return (
+      <div className="text-center py-12">
+        <div className="text-gray-400 mb-4">
+          <svg className="w-16 h-16 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z" />
+          </svg>
+        </div>
+        <h3 className="text-lg font-semibold text-gray-700 mb-2">No {activeTab} videos found</h3>
+        <p className="text-gray-500">Check back later for updates</p>
+      </div>
+    );
+  }
+
+  return (
+    <div className="space-y-6">
+      {/* Header */}
+      <div className="flex items-center justify-between">
+        <div>
+          <div className="flex items-center gap-3">
+            <h1 className="text-2xl font-bold text-gray-900">{title}</h1>
+            {isFetching && (
+              <div className="flex items-center gap-2 text-sm text-gray-500">
+                <RefreshCw className="w-4 h-4 animate-spin" />
+                <span>Updating...</span>
+              </div>
+            )}
+          </div>
+          {description && (
+            <p className="text-gray-600 mt-1">{description}</p>
+          )}
+        </div>
+
+      </div>
+
+      {/* Videos List */}
+      <div className="space-y-4">
+        {videos.map((video, index) => {
+          switch (activeTab) {
+            case 'upcoming':
+              return <UpcomingVideoCard key={video.id} video={video as UpcomingVideo} />;
+            case 'live':
+              return <LiveVideoCard key={video.id} video={video as LiveVideo} />;
+            case '24hr':
+            case '3days':
+            case '7days':
+              return <RankingVideoCard key={video.id} video={video as RankingVideo} rank={index + 1} />;
+            default:
+              return <UpcomingVideoCard key={video.id} video={video as UpcomingVideo} />;
+          }
+        })}
+      </div>
+    </div>
+  );
+}
