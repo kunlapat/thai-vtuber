@@ -15,7 +15,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Thai VTuber Dashboard",
+  title: "Thai VTuber",
   description: "Analytics dashboard for Thai VTuber channels with statistics, rankings, and insights",
 };
 

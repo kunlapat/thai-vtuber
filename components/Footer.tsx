@@ -17,7 +17,7 @@ export const Footer = () => {
             </a>
           </p>
           <p className="text-gray-500">
-            © {new Date().getFullYear()} Thai VTuber Dashboard. All rights reserved.
+            © {new Date().getFullYear()} Thai VTuber. All rights reserved.
           </p>
         </div>
       </div>
