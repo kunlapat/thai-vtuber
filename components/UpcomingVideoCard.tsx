@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
-import { sendGTMEvent } from '@next/third-parties/google';
+import { sendGAEvent } from '@next/third-parties/google';
 import { UpcomingVideo } from '@/types/videos';
 import { formatDistanceToNow, format } from 'date-fns';
 import { enUS } from 'date-fns/locale';
@@ -97,8 +97,7 @@ export default function UpcomingVideoCard({ video }: UpcomingVideoCardProps) {
               href={`/channel/${video.channel_id}`}
               className="flex items-center gap-3 mb-3 group"
               prefetch={false}
-              onClick={() => sendGTMEvent({ 
-                event: 'channel_click',
+              onClick={() => sendGAEvent('event', 'channel_click', { 
                 channelId: video.channel_id
               })}
             >

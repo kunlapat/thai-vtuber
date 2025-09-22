@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { sendGTMEvent } from '@next/third-parties/google';
+import { sendGAEvent } from '@next/third-parties/google';
 import { VTuberChannel } from '@/types/vtuber';
 import { formatNumber, formatDate, isChannelActive } from '@/utils/vtuberStats';
 import { ExternalLink, Users, Eye, Calendar, RefreshCw, CheckCircle, XCircle } from 'lucide-react';
@@ -35,8 +35,7 @@ export const ChannelList = ({ channels, startIndex = 0, subscriberRanks, sortFie
   // Navigate to channel page
   const handleChannelClick = (channelId: string) => {
     // Send GTM event for channel click tracking
-    sendGTMEvent({ 
-      event: 'channel_click',
+    sendGAEvent('event', 'channel_click', {
       channelId: channelId
     });
     

@@ -2,11 +2,11 @@
 
 import Image from 'next/image';
 import Link from 'next/link';
-import { sendGTMEvent } from '@next/third-parties/google';
+import { sendGAEvent } from '@next/third-parties/google';
 import { RankingVideo } from '@/types/videos';
 import { formatDistanceToNow } from 'date-fns';
 import { enUS } from 'date-fns/locale';
-import { Eye, MessageCircle, ThumbsUp, Star } from 'lucide-react';
+import { Eye } from 'lucide-react';
 
 interface RankingVideoCardProps {
   video: RankingVideo;
@@ -101,8 +101,7 @@ export default function RankingVideoCard({ video, rank }: RankingVideoCardProps)
               href={`/channel/${video.channel_id}`}
               className="flex items-center gap-2 mb-3 group"
               prefetch={false}
-              onClick={() => sendGTMEvent({ 
-                event: 'channel_click',
+              onClick={() => sendGAEvent('event', 'channel_click', {
                 channelId: video.channel_id
               })}
             >
