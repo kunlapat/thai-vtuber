@@ -13,17 +13,19 @@ import {
   Activity,
   Play,
   ExternalLink,
-  Plus
+  Plus,
+  Github
 } from 'lucide-react';
 
 interface SidebarProps {
   isCollapsed: boolean;
   onToggle: () => void;
+  isMobileOpen: boolean;
+  onMobileToggle: () => void;
 }
 
-export const Sidebar = ({ isCollapsed, onToggle }: SidebarProps) => {
+export const Sidebar = ({ isCollapsed, onToggle, isMobileOpen, onMobileToggle }: SidebarProps) => {
   const pathname = usePathname();
-  const [isMobileOpen, setIsMobileOpen] = useState(false);
 
   const navigation = [
     { name: 'Home', href: '/', icon: Home },
@@ -37,7 +39,7 @@ export const Sidebar = ({ isCollapsed, onToggle }: SidebarProps) => {
     return (
       <Link
         href={item.href}
-        onClick={() => mobile && setIsMobileOpen(false)}
+        onClick={() => mobile && onMobileToggle()}
         className={`
           flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium transition-colors
           ${isActive 
@@ -57,19 +59,11 @@ export const Sidebar = ({ isCollapsed, onToggle }: SidebarProps) => {
 
   return (
     <>
-      {/* Mobile menu button */}
-      <button
-        className="fixed top-4 left-4 z-50 lg:hidden p-2 rounded-md bg-white shadow-md border"
-        onClick={() => setIsMobileOpen(true)}
-      >
-        <Menu className="w-5 h-5" />
-      </button>
-
       {/* Mobile overlay */}
       {isMobileOpen && (
         <div 
           className="fixed inset-0 bg-black bg-opacity-50 z-40 lg:hidden"
-          onClick={() => setIsMobileOpen(false)}
+          onClick={onMobileToggle}
         />
       )}
 
@@ -98,10 +92,11 @@ export const Sidebar = ({ isCollapsed, onToggle }: SidebarProps) => {
           </div>
           <button
             onClick={onToggle}
-            className="p-1.5 rounded-md hover:bg-gray-100 transition-colors cursor-pointer text-gray-700"
+            type='button'
+            className="p-1.5 rounded-md hover:bg-gray-100 transition-colors cursor-pointer text-gray-900"
           >
             <ChevronLeft 
-              className={`w-4 h-4 transition-transform text-gray-700 cursor-pointer ${
+              className={`w-4 h-4 transition-transform text-gray-900 cursor-pointer ${
                 isCollapsed ? 'rotate-180' : ''
               }`} 
             />
@@ -136,6 +131,24 @@ export const Sidebar = ({ isCollapsed, onToggle }: SidebarProps) => {
             <Plus className="w-5 h-5 flex-shrink-0" />
             {!isCollapsed && (
               <span className="truncate">Submit new channel</span>
+            )}
+          </Link>
+          
+          {/* GitHub Repository Link */}
+          <Link
+            href="https://github.com/kerlos/thai-vtuber"
+            target="_blank"
+            rel="noopener noreferrer"
+            className={`
+              flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium transition-colors
+              text-gray-700 hover:text-gray-900 hover:bg-gray-100 mt-2
+              ${isCollapsed ? 'justify-center px-2' : ''}
+            `}
+            prefetch={false}
+          >
+            <Github className="w-5 h-5 flex-shrink-0" />
+            {!isCollapsed && (
+              <span className="truncate">Repository</span>
             )}
           </Link>
         </div>
@@ -180,10 +193,11 @@ export const Sidebar = ({ isCollapsed, onToggle }: SidebarProps) => {
             />
           </div>
           <button
-            onClick={() => setIsMobileOpen(false)}
+            onClick={onMobileToggle}
+            type='button'
             className="p-1.5 rounded-md hover:bg-gray-100 transition-colors"
           >
-            <X className="w-4 h-4" />
+            <X className="w-4 h-4 text-gray-900" />
           </button>
         </div>
 
@@ -205,12 +219,25 @@ export const Sidebar = ({ isCollapsed, onToggle }: SidebarProps) => {
             href="https://vtuber.chuysan.com/#/register"
             target="_blank"
             rel="noopener noreferrer"
-            onClick={() => setIsMobileOpen(false)}
+            onClick={onMobileToggle}
             className="flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium transition-colors text-gray-700 hover:text-gray-900 hover:bg-gray-100"
             prefetch={false}
           >
             <Plus className="w-5 h-5 flex-shrink-0" />
             <span className="truncate">Submit new channel</span>
+          </Link>
+          
+          {/* GitHub Repository Link */}
+          <Link
+            href="https://github.com/kerlos/thai-vtuber"
+            target="_blank"
+            rel="noopener noreferrer"
+            onClick={onMobileToggle}
+            className="flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium transition-colors text-gray-700 hover:text-gray-900 hover:bg-gray-100 mt-2"
+            prefetch={false}
+          >
+            <Github className="w-5 h-5 flex-shrink-0" />
+            <span className="truncate">Repository</span>
           </Link>
         </div>
 

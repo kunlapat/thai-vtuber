@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import { Sidebar } from './Sidebar';
 import { Footer } from './Footer';
+import { MobileHeader } from './MobileHeader';
 
 interface AppLayoutProps {
   children: React.ReactNode;
@@ -10,14 +11,25 @@ interface AppLayoutProps {
 
 export const AppLayout = ({ children }: AppLayoutProps) => {
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   const toggleSidebar = () => {
     setSidebarCollapsed(!sidebarCollapsed);
   };
 
+  const toggleMobileMenu = () => {
+    setIsMobileMenuOpen(!isMobileMenuOpen);
+  };
+
   return (
     <div className="min-h-screen bg-gray-50">
-      <Sidebar isCollapsed={sidebarCollapsed} onToggle={toggleSidebar} />
+      <MobileHeader onMenuClick={toggleMobileMenu} />
+      <Sidebar 
+        isCollapsed={sidebarCollapsed} 
+        onToggle={toggleSidebar}
+        isMobileOpen={isMobileMenuOpen}
+        onMobileToggle={toggleMobileMenu}
+      />
       
       {/* Main Content */}
       <div 
@@ -29,7 +41,7 @@ export const AppLayout = ({ children }: AppLayoutProps) => {
           lg:pl-0 pl-0
         `}
       >
-        <main className="flex-1 p-4 lg:p-8 pt-16 lg:pt-8 overflow-x-auto">
+        <main className="flex-1 p-4 lg:p-8 pt-20 lg:pt-8 overflow-x-auto">
           {children}
         </main>
         <Footer />

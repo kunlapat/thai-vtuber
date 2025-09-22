@@ -74,4 +74,8 @@ pnpm start
 
 ## Data Source
 
-Data is provided by [vtuber.chuysan.com](https://vtuber.chuysan.com/), which offers comprehensive analytics and information about Thai VTuber channels.
+This application is powered by comprehensive data provided by [vtuber.chuysan.com](https://vtuber.chuysan.com/)
+
+### Channel Registration
+
+VTuber channel owners can register their channels directly through the [vtuber.chuysan.com registration portal](https://vtuber.chuysan.com/#/register) to ensure their channels are included in the analytics and to keep their information up to date.

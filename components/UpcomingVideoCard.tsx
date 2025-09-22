@@ -54,6 +54,7 @@ export default function UpcomingVideoCard({ video }: UpcomingVideoCardProps) {
             target="_blank"
             rel="noopener noreferrer"
             className="block relative aspect-video bg-gray-100 rounded-lg overflow-hidden"
+            prefetch={false}
           >
             <Image
               src={video.thumbnail_image_url}
@@ -83,6 +84,7 @@ export default function UpcomingVideoCard({ video }: UpcomingVideoCardProps) {
               target="_blank"
               rel="noopener noreferrer"
               className="block"
+              prefetch={false}
             >
               <h3 className="font-semibold text-gray-900 hover:text-blue-600 transition-colors mb-2 line-clamp-2">
                 {video.title}
@@ -93,6 +95,7 @@ export default function UpcomingVideoCard({ video }: UpcomingVideoCardProps) {
             <Link
               href={`/channel/${video.channel_id}`}
               className="flex items-center gap-3 mb-3 group"
+              prefetch={false}
             >
               {!channelImageError && (
                 <div className="relative w-10 h-10 rounded-full overflow-hidden bg-gray-200 flex-shrink-0">

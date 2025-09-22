@@ -70,6 +70,7 @@ function ChannelDescription({ description }: { description: string }) {
           <Link
             key={index}
             href={part}
+            prefetch={false}
             target="_blank"
             rel="noopener noreferrer"
             className="text-blue-600 hover:text-blue-800 hover:underline transition-colors duration-200"
@@ -139,6 +140,7 @@ export default function ChannelHeader({ channel }: ChannelHeaderProps) {
               target="_blank"
               rel="noopener noreferrer"
               className="block group"
+              prefetch={false}
             >
               <Image
                 src={channel.thumbnail_icon_url}
@@ -166,6 +168,7 @@ export default function ChannelHeader({ channel }: ChannelHeaderProps) {
                     target="_blank"
                     rel="noopener noreferrer"
                     className="inline-block relative cursor-pointer transform transition-all duration-300 ease-in-out hover:text-blue-600 hover:scale-105 after:absolute after:bottom-0 after:left-0 after:h-0.5 after:w-0 after:bg-blue-600 after:transition-all after:duration-300 hover:after:w-full"
+                    prefetch={false}
                   >
                     {channel.title}
                   </Link>

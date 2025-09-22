@@ -147,9 +147,9 @@ export const ChannelList = ({ channels, startIndex = 0, subscriberRanks, sortFie
               <th className="px-6 py-3 text-left text-xs font-medium text-gray-700 uppercase tracking-wider">
                 <SortButton field="last_published_video_at">Last Video</SortButton>
               </th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-700 uppercase tracking-wider">
+              {/* <th className="px-6 py-3 text-left text-xs font-medium text-gray-700 uppercase tracking-wider">
                 Status
-              </th>
+              </th> */}
             </tr>
           </thead>
           <tbody className="bg-white divide-y divide-gray-200">
@@ -214,7 +214,7 @@ export const ChannelList = ({ channels, startIndex = 0, subscriberRanks, sortFie
                     <span className="text-gray-500">No videos</span>
                   )}
                 </td>
-                <td className="px-6 py-4 whitespace-nowrap">
+                {/* <td className="px-6 py-4 whitespace-nowrap">
                   <div className="flex items-center justify-between">
                     <div>
                       {isChannelActive(channel) ? (
@@ -230,7 +230,7 @@ export const ChannelList = ({ channels, startIndex = 0, subscriberRanks, sortFie
                       )}
                     </div>
                   </div>
-                </td>
+                </td> */}
               </tr>
             ))}
           </tbody>
