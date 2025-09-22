@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
+import { sendGTMEvent } from '@next/third-parties/google';
 import { LiveVideo } from '@/types/videos';
 import { formatDistanceToNow } from 'date-fns';
 import { enUS } from 'date-fns/locale';
@@ -111,6 +112,10 @@ export default function LiveVideoCard({ video }: LiveVideoCardProps) {
               href={`/channel/${video.channel_id}`}
               className="flex items-center gap-3 mb-3 group"
               prefetch={false}
+              onClick={() => sendGTMEvent({ 
+                event: 'channel_click',
+                channelId: video.channel_id
+              })}
             >
               {!channelImageError && (
                 <div className="relative w-10 h-10 rounded-full overflow-hidden bg-gray-200 flex-shrink-0">
