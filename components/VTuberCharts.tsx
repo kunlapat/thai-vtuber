@@ -188,10 +188,10 @@ export const VTuberCharts = ({ channels }: VTuberChartsProps) => {
     if (active && payload && payload.length) {
       return (
         <div className="bg-white p-3 border rounded shadow-lg">
-          <p className="text-sm font-medium">{payload[0]?.payload?.fullName || label}</p>
+          <p className="text-sm font-medium text-black">{payload[0]?.payload?.fullName || label}</p>
           {payload.map((entry: TooltipPayloadEntry, index: number) => (
-            <p key={index} className="text-sm" style={{ color: entry.color }}>
-              {`${entry.dataKey}: ${formatNumber(entry.value)}`}
+            <p key={index} className="text-sm text-black">
+              <span style={{ color: entry.color }}>●</span> {`${entry.dataKey}: ${formatNumber(entry.value)}`}
             </p>
           ))}
         </div>
@@ -224,7 +224,7 @@ export const VTuberCharts = ({ channels }: VTuberChartsProps) => {
 
       {/* Activity Status Distribution Pie Chart */}
       <div className="bg-white p-6 rounded-lg shadow-md border border-gray-200">
-        <h3 className="text-lg font-semibold mb-4 text-gray-900">Channel Activity Status</h3>add
+        <h3 className="text-lg font-semibold mb-4 text-gray-900">Channel Activity Status</h3>
         <ResponsiveContainer width="100%" height={300}>
           <PieChart>
             <Pie
@@ -246,6 +246,8 @@ export const VTuberCharts = ({ channels }: VTuberChartsProps) => {
                 `${value} channels`,
                 name
               ]}
+              contentStyle={{ backgroundColor: 'white', border: '1px solid #ccc', borderRadius: '4px', color: 'black' }}
+              labelStyle={{ color: 'black' }}
             />
           </PieChart>
         </ResponsiveContainer>
@@ -277,10 +279,10 @@ export const VTuberCharts = ({ channels }: VTuberChartsProps) => {
                   const data = payload[0].payload;
                   return (
                     <div className="bg-white p-3 border rounded shadow-lg">
-                      <p className="text-sm font-medium">{data.name}</p>
-                      <p className="text-sm">Subscribers: {formatNumber(data.subscribers || 0)}</p>
-                      <p className="text-sm">Views: {formatNumber(data.views || 0)}</p>
-                      <p className="text-sm">Ratio: {(data.ratio || 0).toFixed(1)} views/subscriber</p>
+                      <p className="text-sm font-medium text-black">{data.name}</p>
+                      <p className="text-sm text-black">Subscribers: {formatNumber(data.subscribers || 0)}</p>
+                      <p className="text-sm text-black">Views: {formatNumber(data.views || 0)}</p>
+                      <p className="text-sm text-black">Ratio: {(data.ratio || 0).toFixed(1)} views/subscriber</p>
                     </div>
                   );
                 }
@@ -300,7 +302,10 @@ export const VTuberCharts = ({ channels }: VTuberChartsProps) => {
             <CartesianGrid strokeDasharray="3 3" />
             <XAxis dataKey="year" />
             <YAxis />
-            <Tooltip />
+            <Tooltip 
+              contentStyle={{ backgroundColor: 'white', border: '1px solid #ccc', borderRadius: '4px', color: 'black' }}
+              labelStyle={{ color: 'black' }}
+            />
             <Bar dataKey="channels" fill="#FF8042" radius={[4, 4, 0, 0]} />
           </BarChart>
         </ResponsiveContainer>
@@ -318,6 +323,8 @@ export const VTuberCharts = ({ channels }: VTuberChartsProps) => {
             <Tooltip 
               formatter={(value: number) => [`${value} channels`, 'Channels']}
               labelFormatter={(label) => `Engagement Range: ${label}`}
+              contentStyle={{ backgroundColor: 'white', border: '1px solid #ccc', borderRadius: '4px', color: 'black' }}
+              labelStyle={{ color: 'black' }}
             />
             <Area 
               type="monotone" 
@@ -354,6 +361,8 @@ export const VTuberCharts = ({ channels }: VTuberChartsProps) => {
                 `${value} channels`,
                 name
               ]}
+              contentStyle={{ backgroundColor: 'white', border: '1px solid #ccc', borderRadius: '4px', color: 'black' }}
+              labelStyle={{ color: 'black' }}
             />
           </PieChart>
         </ResponsiveContainer>
@@ -381,9 +390,9 @@ export const VTuberCharts = ({ channels }: VTuberChartsProps) => {
                   const data = payload[0].payload as any;
                   return (
                     <div className="bg-white p-3 border rounded shadow-lg">
-                      <p className="text-sm font-medium">{data.fullName}</p>
-                      <p className="text-sm">Subscribers: {formatNumber(data.subscribers || 0)}</p>
-                      <p className="text-sm">Engagement Rate: {(data.engagementRate || 0).toFixed(1)} views/sub</p>
+                      <p className="text-sm font-medium text-black">{data.fullName}</p>
+                      <p className="text-sm text-black">Subscribers: {formatNumber(data.subscribers || 0)}</p>
+                      <p className="text-sm text-black">Engagement Rate: {(data.engagementRate || 0).toFixed(1)} views/sub</p>
                     </div>
                   );
                 }
@@ -407,6 +416,8 @@ export const VTuberCharts = ({ channels }: VTuberChartsProps) => {
             <Tooltip 
               formatter={(value: number) => [`${value} channels`, 'Channels']}
               labelFormatter={(label) => `Last Published: ${label}`}
+              contentStyle={{ backgroundColor: 'white', border: '1px solid #ccc', borderRadius: '4px', color: 'black' }}
+              labelStyle={{ color: 'black' }}
             />
             <Line 
               type="monotone" 
