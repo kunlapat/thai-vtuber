@@ -2,6 +2,17 @@
 
 A comprehensive analytics dashboard for Thai VTuber channels, providing real-time statistics, rankings, and insights into the Thai VTuber community. This platform helps users discover and explore Thai VTuber channels with detailed analytics including subscriber counts, video metrics, and activity status.
 
+## Fork Description
+
+This fork adds quality-of-life improvements focused on data exploration and comparison, powered by Codex. Key updates include:
+
+- **Video page enhancements**
+  - Switchable grid and list layouts for live & upcoming, and ranking tabs with compact cards surfacing viewer counts, scheduling, and channel context
+
+- **Analytics dashboard enhancements**
+  - Revamped analytics charts with enhanced scatter exploration with searchable multi-select filters, prefix-aware suggestions, clearer chip management, stacked active-share breakdowns, and more
+  - Channel tenure vs. performance chart was added
+
 ## Features
 
 - **Channel Analytics**: Browse and explore Thai VTuber channels with detailed statistics

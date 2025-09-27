@@ -15,6 +15,7 @@ import { RefreshCw, Wifi, WifiOff } from 'lucide-react';
 
 interface VideosListProps {
   activeTab: VideoTabType;
+  viewMode?: 'grid' | 'list';
 }
 
 // Loading skeleton component
@@ -32,7 +33,8 @@ const VideoSkeleton = () => (
   </div>
 );
 
-export default function VideosList({ activeTab }: VideosListProps) {
+export default function VideosList({ activeTab, viewMode = 'grid' }: VideosListProps) {
+  const isGridView = viewMode === 'grid';
   // Always call all hooks at the top level
   const liveQuery = useLiveVideos();
   const upcomingQuery = useUpcomingVideos();
@@ -173,7 +175,7 @@ export default function VideosList({ activeTab }: VideosListProps) {
 
       {/* Videos List */}
       {activeTab === 'live-upcoming' ? (
-        <div className="space-y-8">
+        <div className="space-y-6">
           {/* Live Videos Section */}
           {liveVideos.length > 0 && (
             <div className="space-y-4">
@@ -184,11 +186,19 @@ export default function VideosList({ activeTab }: VideosListProps) {
                   <span className="text-sm text-red-600 font-medium">LIVE</span>
                 </div>
               </div>
-              <div className="space-y-4">
-                {liveVideos.map((video) => (
-                  <LiveVideoCard key={video.id} video={video as LiveVideo} />
-                ))}
-              </div>
+              {isGridView ? (
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-3">
+                  {liveVideos.map((video) => (
+                    <LiveVideoCard key={video.id} video={video as LiveVideo} variant="grid" />
+                  ))}
+                </div>
+              ) : (
+                <div className="space-y-4">
+                  {liveVideos.map((video) => (
+                    <LiveVideoCard key={video.id} video={video as LiveVideo} variant="list" />
+                  ))}
+                </div>
+              )}
             </div>
           )}
 
@@ -196,27 +206,75 @@ export default function VideosList({ activeTab }: VideosListProps) {
           {upcomingVideos.length > 0 && (
             <div className="space-y-4">
               <h3 className="text-lg font-semibold text-gray-900">Upcoming</h3>
-              <div className="space-y-4">
-                {upcomingVideos.map((video) => (
-                  <UpcomingVideoCard key={video.id} video={video as UpcomingVideo} />
-                ))}
-              </div>
+              {isGridView ? (
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-3">
+                  {upcomingVideos.map((video) => (
+                    <UpcomingVideoCard key={video.id} video={video as UpcomingVideo} variant="grid" />
+                  ))}
+                </div>
+              ) : (
+                <div className="space-y-4">
+                  {upcomingVideos.map((video) => (
+                    <UpcomingVideoCard key={video.id} video={video as UpcomingVideo} variant="list" />
+                  ))}
+                </div>
+              )}
             </div>
           )}
         </div>
       ) : (
-        <div className="space-y-4">
-          {videos.map((video, index) => {
-            switch (activeTab) {
-              case '24hr':
-              case '3days':
-              case '7days':
-                return <RankingVideoCard key={video.id} video={video as RankingVideo} rank={index + 1} />;
-              default:
-                return <UpcomingVideoCard key={video.id} video={video as UpcomingVideo} />;
-            }
-          })}
-        </div>
+        isGridView ? (
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-3">
+            {videos.map((video, index) => {
+              switch (activeTab) {
+                case '24hr':
+                case '3days':
+                case '7days':
+                  return (
+                    <RankingVideoCard
+                      key={video.id}
+                      video={video as RankingVideo}
+                      rank={index + 1}
+                      variant="grid"
+                    />
+                  );
+                default:
+                  return (
+                    <UpcomingVideoCard
+                      key={video.id}
+                      video={video as UpcomingVideo}
+                      variant="grid"
+                    />
+                  );
+              }
+            })}
+          </div>
+        ) : (
+          <div className="space-y-4">
+            {videos.map((video, index) => {
+              switch (activeTab) {
+                case '24hr':
+                case '3days':
+                case '7days':
+                  return (
+                    <RankingVideoCard
+                      key={video.id}
+                      video={video as RankingVideo}
+                      rank={index + 1}
+                    />
+                  );
+                default:
+                  return (
+                    <UpcomingVideoCard
+                      key={video.id}
+                      video={video as UpcomingVideo}
+                      variant="list"
+                    />
+                  );
+              }
+            })}
+          </div>
+        )
       )}
     </div>
   );

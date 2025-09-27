@@ -11,6 +11,7 @@ import { Eye } from 'lucide-react';
 interface RankingVideoCardProps {
   video: RankingVideo;
   rank: number;
+  variant?: 'grid' | 'list';
 }
 
 // Format numbers for display
@@ -44,7 +45,76 @@ const getRankStyling = (rank: number) => {
   return 'bg-gray-200 text-gray-700';
 };
 
-export default function RankingVideoCard({ video, rank }: RankingVideoCardProps) {
+export default function RankingVideoCard({ video, rank, variant = 'list' }: RankingVideoCardProps) {
+  if (variant === 'grid') {
+    return (
+      <div className="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden hover:shadow-md transition-shadow duration-200 h-full group">
+        <Link
+          href={`https://www.youtube.com/watch?v=${video.id}`}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="block relative aspect-video bg-gray-100"
+          prefetch={false}
+        >
+          <Image
+            src={video.thumbnail_image_url}
+            alt={video.title}
+            fill
+            className="object-cover transition-transform duration-200 group-hover:scale-105"
+            sizes="(min-width: 1280px) 20vw, (min-width: 1024px) 25vw, (min-width: 640px) 50vw, 100vw"
+            onError={(e) => {
+              const target = e.target as HTMLImageElement;
+              if (target.src.includes('i.ytimg.com')) {
+                target.src = target.src.replace('maxresdefault', 'hqdefault');
+              }
+            }}
+          />
+          <div className={`absolute top-2 left-2 w-8 h-8 rounded-full flex items-center justify-center font-bold text-sm ${getRankStyling(rank)}`}>
+            {rank}
+          </div>
+          <div className="absolute bottom-2 right-2 bg-black bg-opacity-75 text-white px-2 py-1 rounded text-xs flex items-center gap-1">
+            <Eye className="w-3 h-3" />
+            <span>{formatNumber(video.view_count)}</span>
+          </div>
+        </Link>
+
+        <div className="p-3 flex flex-col h-full">
+          <Link
+            href={`https://www.youtube.com/watch?v=${video.id}`}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="block"
+            prefetch={false}
+          >
+            <h3 className="font-semibold text-sm text-gray-900 hover:text-blue-600 transition-colors leading-snug line-clamp-2">
+              {video.title}
+            </h3>
+          </Link>
+
+          <Link
+            href={`/channel/${video.channel_id}`}
+            className="mt-2 text-xs text-gray-600 hover:text-gray-900 font-medium"
+            prefetch={false}
+            onClick={() => sendGAEvent('event', 'channel_click', {
+              channelId: video.channel_id
+            })}
+          >
+            {video.channel_title}
+          </Link>
+
+          <div className="mt-3 flex items-center gap-2 text-xs text-gray-600">
+            <Eye className="w-4 h-4" />
+            <span>{formatNumber(video.view_count)} views</span>
+          </div>
+
+          <div className="mt-2 text-[11px] text-gray-500">
+            <div>Published {formatDate(video.published_at)}</div>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden hover:shadow-md transition-shadow duration-200">
       <div className="flex flex-col lg:flex-row">
