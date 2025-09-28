@@ -1,6 +1,6 @@
 'use client';
 
-import { ChangeEvent, KeyboardEvent, useMemo, useState } from 'react';
+import { ChangeEvent, KeyboardEvent, useMemo, useState, useCallback, useEffect } from 'react';
 import {
   BarChart,
   Bar,
@@ -24,12 +24,30 @@ import {
 } from 'recharts';
 import { VTuberChannel, CustomTooltipProps, TooltipPayloadEntry } from '@/types/vtuber';
 import { formatNumber, isChannelActive } from '@/utils/vtuberStats';
+import ScatterSearchInput from './ScatterSearchInput';
 
 interface VTuberChartsProps {
   channels: VTuberChannel[];
 }
 
 const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042', '#8884d8', '#82ca9d', '#ffc658', '#ff7300'];
+
+// Simple debouncing hook for performance
+const useDebounce = (value: string, delay: number) => {
+  const [debouncedValue, setDebouncedValue] = useState(value);
+
+  useEffect(() => {
+    const handler = setTimeout(() => {
+      setDebouncedValue(value);
+    }, delay);
+
+    return () => {
+      clearTimeout(handler);
+    };
+  }, [value, delay]);
+
+  return debouncedValue;
+};
 
 const TENURE_FILTERS = [
   { id: 'lt1', label: '<1y', min: 0, max: 1 },
@@ -551,8 +569,6 @@ export const VTuberCharts = ({ channels }: VTuberChartsProps) => {
   }, [channels]);
 
   const [selectedScatterChannels, setSelectedScatterChannels] = useState<string[]>([]);
-  const [scatterSearchTerm, setScatterSearchTerm] = useState('');
-  const [isScatterSuggestionOpen, setIsScatterSuggestionOpen] = useState(false);
   const [selectedTenureFilters, setSelectedTenureFilters] = useState<string[]>(() =>
     TENURE_FILTERS.filter(filter => filter.id !== '10plus').map(filter => filter.id)
   );
@@ -919,32 +935,6 @@ export const VTuberCharts = ({ channels }: VTuberChartsProps) => {
     return uniqueNames.sort((a, b) => a.localeCompare(b));
   }, [chartData.scatterData]);
 
-  // suggestions that match the search text / skip selected channels
-  const scatterSuggestions = useMemo(() => {
-    const normalizedTerm = normalizeText(scatterSearchTerm.trim());
-    const available = scatterChannelOptions.filter(name => !selectedScatterChannels.includes(name));
-
-    if (!normalizedTerm) {
-      return available.slice(0, 20);
-    }
-
-    return available
-      .map(name => ({
-        name,
-        normalized: normalizeText(name),
-      }))
-      .filter(item => item.normalized.includes(normalizedTerm))
-      .sort((a, b) => {
-        const aStarts = a.normalized.startsWith(normalizedTerm);
-        const bStarts = b.normalized.startsWith(normalizedTerm);
-        if (aStarts !== bStarts) {
-          return aStarts ? -1 : 1;
-        }
-        return a.normalized.localeCompare(b.normalized);
-      })
-      .map(item => item.name)
-      .slice(0, 20);
-  }, [scatterChannelOptions, scatterSearchTerm, selectedScatterChannels]);
 
   // default 50-point cap when no filter
   const filteredScatterData = useMemo(() => {
@@ -1007,47 +997,17 @@ export const VTuberCharts = ({ channels }: VTuberChartsProps) => {
     return { min, max };
   }, [chartData.tenurePerformanceData]);
 
-  const handleScatterSearchChange = (event: ChangeEvent<HTMLInputElement>) => {
-    setScatterSearchTerm(event.target.value);
-    setIsScatterSuggestionOpen(true);
-  };
 
-  const handleScatterSelectChannel = (channelName: string) => {
+  const handleScatterSelectChannel = useCallback((channelName: string) => {
     setSelectedScatterChannels(prev => (prev.includes(channelName) ? prev : [...prev, channelName]));
-    setScatterSearchTerm('');
-    setIsScatterSuggestionOpen(false);
-  };
-
-  const handleScatterSearchKeyDown = (event: KeyboardEvent<HTMLInputElement>) => {
-    if (event.key === 'Enter') {
-      event.preventDefault();
-      const [firstOption] = scatterSuggestions;
-      if (firstOption) {
-        handleScatterSelectChannel(firstOption);
-        return;
-      }
-
-      const exactMatch = scatterChannelOptions.find(
-        name => name.toLowerCase() === scatterSearchTerm.trim().toLowerCase()
-      );
-      if (exactMatch) {
-        handleScatterSelectChannel(exactMatch);
-        return;
-      }
-
-      setIsScatterSuggestionOpen(false);
-    }
-  };
-
-  const handleScatterSearchBlur = () => {
-    // delay for (onMouseDown) still register before blur
-    setTimeout(() => setIsScatterSuggestionOpen(false), 80);
-  };
+  }, []);
 
 
-  const handleScatterRemoveChannel = (channelName: string) => {
+
+
+  const handleScatterRemoveChannel = useCallback((channelName: string) => {
     setSelectedScatterChannels(prev => prev.filter(name => name !== channelName));
-  };
+  }, []);
 
   const handleTenureFilterToggle = (filterId: string) => {
     setSelectedTenureFilters(prev =>
@@ -1295,67 +1255,14 @@ export const VTuberCharts = ({ channels }: VTuberChartsProps) => {
       {/* Subscribers vs Views Scatter Plot */}
       <div className="order-7 bg-white p-6 rounded-lg shadow-md border border-gray-200">
         <h3 className="text-lg font-semibold mb-4 text-gray-900">Subscribers vs Views Correlation</h3>
-        <div className="mb-4">
-          <div className="relative">
-            <input
-              type="text"
-              value={scatterSearchTerm}
-              onChange={handleScatterSearchChange}
-              onKeyDown={handleScatterSearchKeyDown}
-              onFocus={() => setIsScatterSuggestionOpen(true)}
-              onBlur={handleScatterSearchBlur}
-              placeholder="Search for VTuber channels here..."
-              className="w-full rounded-md border border-gray-300 dark:border-gray-600 p-2 text-sm text-gray-900 dark:text-gray-100 bg-white dark:bg-gray-700 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 placeholder:text-gray-500 dark:placeholder:text-gray-400"
-            />
-            {isScatterSuggestionOpen && scatterSuggestions.length > 0 && scatterSearchTerm.trim() !== '' && (
-              <ul className="absolute z-10 mt-1 max-h-48 w-full overflow-y-auto rounded-md border border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-800 shadow-lg">
-                {scatterSuggestions.map(name => (
-                  <li key={name}>
-                    <button
-                      type="button"
-                      onMouseDown={(event) => {
-                        event.preventDefault();
-                        handleScatterSelectChannel(name);
-                      }}
-                      className="w-full px-3 py-2 text-left text-sm text-gray-700 dark:text-gray-300 hover:bg-blue-50 dark:hover:bg-gray-700"
-                    >
-                      {name}
-                    </button>
-                  </li>
-                ))}
-              </ul>
-            )}
-          </div>
-          <p className="mt-2 text-xs text-gray-500">
-            Type to search for channels. Press Enter or click a result to add it to the comparison list.
-          </p>
-          {selectedScatterChannels.length > 0 && (
-            <div className="mt-3 flex flex-wrap gap-2">
-              {selectedScatterChannels.map(name => (
-                <span
-                  key={name}
-                  className="inline-flex items-center gap-2 rounded-full bg-blue-50 px-3 py-1 text-sm text-blue-700"
-                >
-                  {name}
-                  <button
-                    type="button"
-                    onClick={() => handleScatterRemoveChannel(name)}
-                    className="rounded-full bg-blue-100 px-1.5 py-0.5 text-xs font-semibold text-blue-700 hover:bg-blue-200"
-                  >
-                    x
-                  </button>
-                </span>
-              ))}
-              <button
-                type="button"
-                onClick={() => setSelectedScatterChannels([])}
-                className="inline-flex items-center gap-1 rounded-full border border-gray-300 px-3 py-1 text-sm text-gray-700 hover:bg-gray-50"
-              >
-                Clear all
-              </button>
-            </div>
-          )}
-        </div>
+        <ScatterSearchInput
+          onChannelSelect={handleScatterSelectChannel}
+          onChannelRemove={handleScatterRemoveChannel}
+          onClearAll={() => setSelectedScatterChannels([])}
+          selectedChannels={selectedScatterChannels}
+          allChannels={scatterChannelOptions}
+          placeholder="Search for VTuber channels here..."
+        />
         <ResponsiveContainer width="100%" height={300}>
           <ScatterChart data={filteredScatterData} margin={{ top: 20, right: 20, bottom: 20, left: 20 }}>
             <CartesianGrid strokeDasharray="3 3" />

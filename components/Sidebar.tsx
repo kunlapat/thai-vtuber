@@ -44,11 +44,12 @@ export const Sidebar = ({ isCollapsed, onToggle, isMobileOpen, onMobileToggle }:
         className={`
           flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium transition-colors
           ${isActive 
-            ? 'bg-blue-100 dark:bg-blue-900 text-blue-700 dark:text-blue-300' 
+            ? 'text-white dark:text-blue-300' 
             : 'text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:hover:text-gray-100 hover:bg-gray-100 dark:hover:bg-gray-700'
           }
           ${isCollapsed && !mobile ? 'justify-center px-2' : ''}
         `}
+        style={isActive ? { backgroundColor: '#155DFC', color: 'white' } : {}}
       >
         <item.icon className="w-5 h-5 flex-shrink-0" />
         {(!isCollapsed || mobile) && (
