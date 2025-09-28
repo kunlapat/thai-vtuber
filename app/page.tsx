@@ -153,10 +153,10 @@ export default function Dashboard() {
 
   if (isLoading) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+      <div className="min-h-screen bg-gray-50 dark:bg-gray-900 flex items-center justify-center">
         <div className="text-center">
           <Loader className="w-8 h-8 animate-spin mx-auto mb-4 text-blue-500" />
-          <p className="text-gray-600">Loading VTuber data...</p>
+          <p className="text-gray-600 dark:text-gray-400">Loading VTuber data...</p>
         </div>
       </div>
     );
@@ -164,11 +164,11 @@ export default function Dashboard() {
 
   if (error) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+      <div className="min-h-screen bg-gray-50 dark:bg-gray-900 flex items-center justify-center">
         <div className="text-center max-w-md">
           <AlertCircle className="w-12 h-12 text-red-500 mx-auto mb-4" />
-          <h2 className="text-xl font-semibold text-gray-900 mb-2">Failed to load data</h2>
-          <p className="text-gray-600 mb-4">
+          <h2 className="text-xl font-semibold text-gray-900 dark:text-gray-100 mb-2">Failed to load data</h2>
+          <p className="text-gray-600 dark:text-gray-400 mb-4">
             {error instanceof Error ? error.message : 'An unexpected error occurred'}
           </p>
           <button
@@ -188,8 +188,8 @@ export default function Dashboard() {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold text-gray-900">Thai Vtuber Channels</h1>
-          <p className="mt-2 text-gray-600">
+          <h1 className="text-3xl font-bold text-gray-900 dark:text-gray-100">Thai Vtuber Channels</h1>
+          <p className="mt-2 text-gray-600 dark:text-gray-400">
             Browse and explore Thai VTuber channels
           </p>
         </div>
@@ -197,7 +197,7 @@ export default function Dashboard() {
           href="https://github.com/kerlos/thai-vtuber"
           target="_blank"
           rel="noopener noreferrer"
-          className="flex items-center gap-2 px-3 py-2 bg-black text-white hover:bg-gray-800 rounded-lg transition-colors text-sm font-medium"
+          className="flex items-center gap-2 px-3 py-2 bg-black dark:bg-gray-800 text-white hover:bg-gray-800 dark:hover:bg-gray-700 rounded-lg transition-colors text-sm font-medium"
         >
           <Github className="w-4 h-4" />
           <span className="hidden sm:inline">Repository</span>
@@ -206,17 +206,17 @@ export default function Dashboard() {
         {/* Quick Stats */}
         {stats && (
           <div className="grid grid-cols-2 md:grid-cols-3 gap-4 mb-8">
-            <div className="bg-white p-4 rounded-lg shadow-sm border border-gray-200">
-              <div className="text-2xl font-bold text-gray-900">{stats.totalChannels}</div>
-              <div className="text-sm text-gray-600">Total Channels</div>
+            <div className="bg-white dark:bg-gray-800 p-4 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700">
+              <div className="text-2xl font-bold text-gray-900 dark:text-gray-100">{stats.totalChannels}</div>
+              <div className="text-sm text-gray-600 dark:text-gray-400">Total Channels</div>
             </div>
-            <div className="bg-white p-4 rounded-lg shadow-sm border border-gray-200">
-              <div className="text-2xl font-bold text-gray-900">{formatNumber(stats.totalSubscribers)}</div>
-              <div className="text-sm text-gray-600">Total Subscribers</div>
+            <div className="bg-white dark:bg-gray-800 p-4 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700">
+              <div className="text-2xl font-bold text-gray-900 dark:text-gray-100">{formatNumber(stats.totalSubscribers)}</div>
+              <div className="text-sm text-gray-600 dark:text-gray-400">Total Subscribers</div>
             </div>
-            <div className="bg-white p-4 rounded-lg shadow-sm border border-gray-200">
-              <div className="text-2xl font-bold text-gray-900">{stats.activeChannels}</div>
-              <div className="text-sm text-gray-600">Active Channels</div>
+            <div className="bg-white dark:bg-gray-800 p-4 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700">
+              <div className="text-2xl font-bold text-gray-900 dark:text-gray-100">{stats.activeChannels}</div>
+              <div className="text-sm text-gray-600 dark:text-gray-400">Active Channels</div>
             </div>
           </div>
         )}
@@ -229,7 +229,7 @@ export default function Dashboard() {
         />
 
         {/* Channel List */}
-        <div className="bg-white rounded-lg shadow-md border border-gray-200 overflow-hidden">
+        <div className="bg-white dark:bg-gray-800 rounded-lg shadow-md border border-gray-200 dark:border-gray-700 overflow-hidden">
           <ChannelList 
             channels={paginatedChannels} 
             startIndex={(pagination.currentPage - 1) * pagination.pageSize}

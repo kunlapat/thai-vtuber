@@ -15,7 +15,10 @@ interface LiveVideoCardProps {
 }
 
 // Format numbers for display
-const formatNumber = (num: number) => {
+const formatNumber = (num: number | null | undefined) => {
+  if (num === null || num === undefined || isNaN(num)) {
+    return '0';
+  }
   if (num >= 1000000) {
     return `${(num / 1000000).toFixed(1)}M`;
   } else if (num >= 1000) {
@@ -74,7 +77,7 @@ export default function LiveVideoCard({ video, variant = 'grid' }: LiveVideoCard
               }`}>
                 {isLive ? (
                   <>
-                    <div className="w-2 h-2 bg-white rounded-full animate-pulse" />
+                    <div className="w-2 h-2 bg-white rounded-full animate-pulse live-pulse-dot" />
                     LIVE
                   </>
                 ) : (
@@ -198,7 +201,7 @@ export default function LiveVideoCard({ video, variant = 'grid' }: LiveVideoCard
           }`}>
             {isLive ? (
               <>
-                <div className="w-2 h-2 bg-white rounded-full animate-pulse" />
+                <div className="w-2 h-2 bg-white rounded-full animate-pulse live-pulse-dot" />
                 LIVE
               </>
             ) : (

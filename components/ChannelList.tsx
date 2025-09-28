@@ -58,8 +58,8 @@ export const ChannelList = ({ channels, startIndex = 0, subscriberRanks, sortFie
 
   return (
     <div className="overflow-hidden">
-      <div className="px-6 py-4 bg-gray-50 border-b border-gray-200">
-        <h3 className="text-lg font-semibold text-gray-900">VTuber Channels</h3>
+      <div className="px-6 py-4 bg-gray-50 dark:bg-gray-700 border-b border-gray-200 dark:border-gray-600">
+        <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100">VTuber Channels</h3>
       </div>
 
       {/* Mobile Card View */}
@@ -67,7 +67,7 @@ export const ChannelList = ({ channels, startIndex = 0, subscriberRanks, sortFie
         {channels.map((channel, index) => (
           <div 
             key={channel.channel_id} 
-            className="border-b border-gray-200 last:border-b-0 cursor-pointer hover:bg-blue-50 hover:border-blue-200 hover:shadow-md transition-all duration-200 ease-in-out transform"
+            className="border-b border-gray-200 dark:border-gray-600 last:border-b-0 cursor-pointer hover:bg-blue-50 dark:hover:bg-gray-700 hover:border-blue-200 dark:hover:border-gray-500 hover:shadow-md transition-all duration-200 ease-in-out transform"
             onClick={() => handleChannelClick(channel.channel_id)}
           >
             <div className="p-4">
@@ -89,15 +89,15 @@ export const ChannelList = ({ channels, startIndex = 0, subscriberRanks, sortFie
                 </div>
                 <div className="flex-1 min-w-0">
                   <div className="flex items-start justify-between mb-2">
-                    <h4 className="text-sm font-medium text-gray-900 truncate pr-2 hover:text-blue-700 transition-all duration-200 transform-gpu">
+                    <h4 className="text-sm font-medium text-gray-900 dark:text-gray-100 truncate pr-2 hover:text-blue-700 dark:hover:text-blue-400 transition-all duration-200 transform-gpu">
                       {channel.title}
                     </h4>
-                    <span className="text-xs text-gray-700 flex-shrink-0">
+                    <span className="text-xs text-gray-700 dark:text-gray-300 flex-shrink-0">
                       #{getChannelRank(channel, index)}
                     </span>
                   </div>
                   
-                  <div className="grid grid-cols-2 gap-2 text-xs text-gray-700 mb-2">
+                  <div className="grid grid-cols-2 gap-2 text-xs text-gray-700 dark:text-gray-300 mb-2">
                     <div className="flex items-center gap-1">
                       <Users className="w-3 h-3" />
                       {formatNumber(channel.subscribers)}
@@ -111,12 +111,12 @@ export const ChannelList = ({ channels, startIndex = 0, subscriberRanks, sortFie
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-2">
                       {isChannelActive(channel) ? (
-                        <span className="inline-flex items-center gap-1 px-1.5 py-0.5 bg-green-100 text-green-800 text-xs rounded-full">
+                        <span className="inline-flex items-center gap-1 px-1.5 py-0.5 bg-green-100 dark:bg-green-900 text-green-800 dark:text-green-200 text-xs rounded-full">
                           <CheckCircle className="w-2 h-2" />
                           Active
                         </span>
                       ) : (
-                        <span className="inline-flex items-center gap-1 px-1.5 py-0.5 bg-gray-100 text-gray-600 text-xs rounded-full">
+                        <span className="inline-flex items-center gap-1 px-1.5 py-0.5 bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-400 text-xs rounded-full">
                           <XCircle className="w-2 h-2" />
                           Inactive
                         </span>
@@ -133,24 +133,24 @@ export const ChannelList = ({ channels, startIndex = 0, subscriberRanks, sortFie
       {/* Desktop Table View */}
       <div className="hidden md:block overflow-x-auto">
         <table className="w-full">
-          <thead className="bg-gray-50">
+          <thead className="bg-gray-50 dark:bg-gray-700">
             <tr>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-700 uppercase tracking-wider">
+              <th className="px-6 py-3 text-left text-xs font-medium text-gray-700 dark:text-gray-300 uppercase tracking-wider">
                 Rank
               </th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-700 uppercase tracking-wider">
+              <th className="px-6 py-3 text-left text-xs font-medium text-gray-700 dark:text-gray-300 uppercase tracking-wider">
                 Channel
               </th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-700 uppercase tracking-wider">
+              <th className="px-6 py-3 text-left text-xs font-medium text-gray-700 dark:text-gray-300 uppercase tracking-wider">
                 <SortButton field="subscribers">Subscribers</SortButton>
               </th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-700 uppercase tracking-wider">
+              <th className="px-6 py-3 text-left text-xs font-medium text-gray-700 dark:text-gray-300 uppercase tracking-wider">
                 <SortButton field="views">Views</SortButton>
               </th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-700 uppercase tracking-wider">
+              <th className="px-6 py-3 text-left text-xs font-medium text-gray-700 dark:text-gray-300 uppercase tracking-wider">
                 <SortButton field="published_at">Created</SortButton>
               </th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-700 uppercase tracking-wider">
+              <th className="px-6 py-3 text-left text-xs font-medium text-gray-700 dark:text-gray-300 uppercase tracking-wider">
                 <SortButton field="last_published_video_at">Last Video</SortButton>
               </th>
               {/* <th className="px-6 py-3 text-left text-xs font-medium text-gray-700 uppercase tracking-wider">
@@ -158,14 +158,14 @@ export const ChannelList = ({ channels, startIndex = 0, subscriberRanks, sortFie
               </th> */}
             </tr>
           </thead>
-          <tbody className="bg-white divide-y divide-gray-200">
+          <tbody className="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-600">
             {channels.map((channel, index) => (
               <tr 
                 key={channel.channel_id} 
-                className="hover:bg-gradient-to-r hover:from-blue-50 hover:to-purple-50 hover:shadow-lg cursor-pointer"
+                className="hover:bg-gradient-to-r hover:from-blue-50 hover:to-purple-50 dark:hover:from-gray-700 dark:hover:to-gray-600 hover:shadow-lg cursor-pointer"
                 onClick={() => handleChannelClick(channel.channel_id)}
               >
-                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-700">
+                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-700 dark:text-gray-300">
                   #{getChannelRank(channel, index)}
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap">
@@ -186,38 +186,38 @@ export const ChannelList = ({ channels, startIndex = 0, subscriberRanks, sortFie
                       />
                     </div>
                     <div className="ml-4">
-                      <div className="text-sm font-medium text-gray-900 max-w-xs truncate group-hover:text-blue-700 group-hover:scale-105 transition-all duration-200 transform-gpu">
+                      <div className="text-sm font-medium text-gray-900 dark:text-gray-100 max-w-xs truncate group-hover:text-blue-700 dark:group-hover:text-blue-400 group-hover:scale-105 transition-all duration-200 transform-gpu">
                         {channel.title}
                       </div>
                     </div>
                   </div>
                 </td>
-                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-gray-100">
                   <div className="flex items-center gap-1 group">
-                    <Users className="w-4 h-4 text-gray-500 group-hover:text-blue-500 transition-colors" />
+                    <Users className="w-4 h-4 text-gray-500 dark:text-gray-400 group-hover:text-blue-500 transition-colors" />
                     <span className="group-hover:font-semibold transition-all">{formatNumber(channel.subscribers)}</span>
                   </div>
                 </td>
-                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-gray-100">
                   <div className="flex items-center gap-1 group">
-                    <Eye className="w-4 h-4 text-gray-500 group-hover:text-purple-500 transition-colors" />
+                    <Eye className="w-4 h-4 text-gray-500 dark:text-gray-400 group-hover:text-purple-500 transition-colors" />
                     <span className="group-hover:font-semibold transition-all">{formatNumber(channel.views)}</span>
                   </div>
                 </td>
-                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-700">
+                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-700 dark:text-gray-300">
                   <div className="flex items-center gap-1">
-                    <Calendar className="w-4 h-4 text-gray-500" />
+                    <Calendar className="w-4 h-4 text-gray-500 dark:text-gray-400" />
                     {formatDate(channel.published_at)}
                   </div>
                 </td>
-                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-700">
+                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-700 dark:text-gray-300">
                   {channel.last_published_video_at ? (
                     <div className="flex items-center gap-1">
-                      <Calendar className="w-4 h-4 text-gray-500" />
+                      <Calendar className="w-4 h-4 text-gray-500 dark:text-gray-400" />
                       {formatDate(channel.last_published_video_at)}
                     </div>
                   ) : (
-                    <span className="text-gray-500">No videos</span>
+                    <span className="text-gray-500 dark:text-gray-400">No videos</span>
                   )}
                 </td>
                 {/* <td className="px-6 py-4 whitespace-nowrap">

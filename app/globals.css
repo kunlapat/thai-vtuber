@@ -5,15 +5,23 @@
   --foreground: #171717;
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+/* Light theme */
+.light {
+  --background: #ffffff;
+  --foreground: #171717;
+  --chart-text-color: #666666;
 }
 
+/* Dark theme */
+.dark {
+  --background: #0a0a0a;
+  --foreground: #ededed;
+  --chart-text-color: #d1d5db;
+}
+
+/* System theme fallback */
 @media (prefers-color-scheme: dark) {
-  :root {
+  :root:not(.light):not(.dark) {
     --background: #0a0a0a;
     --foreground: #ededed;
   }
@@ -23,6 +31,318 @@ body {
   background: var(--background);
   color: var(--foreground);
   font-family: Arial, Helvetica, sans-serif;
+  transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+/* Test styles to verify dark mode is working */
+.test-dark-mode {
+  background-color: red;
+}
+
+.dark .test-dark-mode {
+  background-color: blue;
+}
+
+/* Force dark mode styles for testing */
+.dark {
+  color-scheme: dark;
+}
+
+.dark body {
+  background-color: #0a0a0a !important;
+  color: #ededed !important;
+}
+
+.dark .bg-gray-50 {
+  background-color: #0a0a0a !important;
+}
+
+.dark .bg-white {
+  background-color: #1f1f1f !important;
+}
+
+.dark .text-gray-900 {
+  color: #f9fafb !important;
+}
+
+.dark .text-gray-700 {
+  color: #d1d5db !important;
+}
+
+.dark .text-gray-600 {
+  color: #9ca3af !important;
+}
+
+.dark .text-gray-500 {
+  color: #6b7280 !important;
+}
+
+.dark .border-gray-200 {
+  border-color: #374151 !important;
+}
+
+/* Light mode overrides */
+.light body {
+  background-color: #f9fafb !important;
+  color: #111827 !important;
+}
+
+.light .bg-gray-50 {
+  background-color: #f9fafb !important;
+}
+
+.light .bg-white {
+  background-color: #ffffff !important;
+}
+
+.light .bg-gray-900 {
+  background-color: #f9fafb !important;
+}
+
+/* Additional overrides for main layout */
+.light .min-h-screen {
+  background-color: #f9fafb !important;
+}
+
+.dark .min-h-screen {
+  background-color: #0a0a0a !important;
+}
+
+/* Sidebar specific overrides */
+.light .bg-white {
+  background-color: #ffffff !important;
+}
+
+.dark .bg-white {
+  background-color: #1f1f1f !important;
+}
+
+.light .text-gray-700 {
+  color: #6b7280 !important;
+}
+
+.dark .text-gray-700 {
+  color: #d1d5db !important;
+}
+
+.light .text-gray-900 {
+  color: #111827 !important;
+}
+
+.dark .text-gray-900 {
+  color: #f9fafb !important;
+}
+
+.light .text-gray-600 {
+  color: #9ca3af !important;
+}
+
+.dark .text-gray-600 {
+  color: #9ca3af !important;
+}
+
+.light .text-gray-500 {
+  color: #6b7280 !important;
+}
+
+.dark .text-gray-500 {
+  color: #9ca3af !important;
+}
+
+.light .border-gray-200 {
+  border-color: #e5e7eb !important;
+}
+
+.dark .border-gray-200 {
+  border-color: #374151 !important;
+}
+
+.light .border-gray-300 {
+  border-color: #d1d5db !important;
+}
+
+.dark .border-gray-300 {
+  border-color: #4b5563 !important;
+}
+
+/* Fix ChannelList row borders in light mode */
+.light .border-gray-200 {
+  border-color: #e5e7eb !important;
+}
+
+.dark .border-gray-200 {
+  border-color: #374151 !important;
+}
+
+.light .divide-gray-200 > * + * {
+  border-color: #e5e7eb !important;
+}
+
+.dark .divide-gray-200 > * + * {
+  border-color: #374151 !important;
+}
+
+/* Additional light mode improvements */
+.light .text-gray-400 {
+  color: #9ca3af !important;
+}
+
+.dark .text-gray-400 {
+  color: #9ca3af !important;
+}
+
+.light .text-gray-300 {
+  color: #d1d5db !important;
+}
+
+.dark .text-gray-300 {
+  color: #d1d5db !important;
+}
+
+/* Hover states for light mode */
+.light .hover\:bg-gray-100:hover {
+  background-color: #f3f4f6 !important;
+}
+
+.light .hover\:text-gray-900:hover {
+  color: #111827 !important;
+}
+
+.light .hover\:text-gray-700:hover {
+  color: #374151 !important;
+}
+
+/* Fix ChannelList hover states in light mode */
+.light .hover\:bg-blue-50:hover {
+  background-color: #eff6ff !important;
+}
+
+.light .hover\:bg-gray-700:hover {
+  background-color: #f3f4f6 !important;
+}
+
+.light .hover\:from-gray-700:hover {
+  background: linear-gradient(to right, #f3f4f6, #e5e7eb) !important;
+}
+
+.light .hover\:to-gray-600:hover {
+  background: linear-gradient(to right, #f3f4f6, #e5e7eb) !important;
+}
+
+.light .hover\:text-blue-700:hover {
+  color: #1d4ed8 !important;
+}
+
+.light .hover\:text-blue-400:hover {
+  color: #60a5fa !important;
+}
+
+.light .hover\:border-blue-200:hover {
+  border-color: #bfdbfe !important;
+}
+
+.light .hover\:border-gray-500:hover {
+  border-color: #d1d5db !important;
+}
+
+/* Additional ChannelList hover fixes */
+.light .hover\:from-blue-50:hover {
+  background: linear-gradient(to right, #eff6ff, #dbeafe) !important;
+}
+
+.light .hover\:to-purple-50:hover {
+  background: linear-gradient(to right, #eff6ff, #faf5ff) !important;
+}
+
+.light .hover\:ring-blue-300:hover {
+  --tw-ring-color: #93c5fd !important;
+}
+
+.light .hover\:ring-offset-2:hover {
+  --tw-ring-offset-width: 2px !important;
+}
+
+.light .hover\:scale-110:hover {
+  transform: scale(1.1) !important;
+}
+
+.light .hover\:scale-105:hover {
+  transform: scale(1.05) !important;
+}
+
+/* Chart text improvements for dark mode */
+.dark .text-gray-400 {
+  color: #9ca3af !important;
+}
+
+.light .text-gray-400 {
+  color: #9ca3af !important;
+}
+
+/* Additional chart text color fixes */
+.dark .text-gray-600 {
+  color: #d1d5db !important;
+}
+
+.light .text-gray-600 {
+  color: #6b7280 !important;
+}
+
+/* Chart-specific text improvements */
+.dark .text-gray-700 {
+  color: #d1d5db !important;
+}
+
+.light .text-gray-700 {
+  color: #374151 !important;
+}
+
+/* Additional chart text brightness */
+.dark .text-gray-800 {
+  color: #f9fafb !important;
+}
+
+.light .text-gray-800 {
+  color: #1f2937 !important;
+}
+
+/* Force white pulsing circle in Live Now section */
+.live-pulse-dot {
+  background-color: #ffffff !important;
+}
+
+.dark .live-pulse-dot {
+  background-color: #ffffff !important;
+}
+
+.light .live-pulse-dot {
+  background-color: #ffffff !important;
+}
+
+/* Fix dark borders in light mode */
+.light .border-gray-700 {
+  border-color: #d1d5db !important;
+}
+
+.dark .border-gray-700 {
+  border-color: #374151 !important;
+}
+
+.light .border-gray-600 {
+  border-color: #d1d5db !important;
+}
+
+.dark .border-gray-600 {
+  border-color: #4b5563 !important;
+}
+
+/* Ensure proper border colors for all gray variants */
+.light .border-gray-100 {
+  border-color: #f3f4f6 !important;
+}
+
+.dark .border-gray-100 {
+  border-color: #1f2937 !important;
 }
 
 /* Utility classes for text truncation */

@@ -10,16 +10,16 @@ interface MobileHeaderProps {
 
 export const MobileHeader = ({ onMenuClick }: MobileHeaderProps) => {
   return (
-    <header className="fixed top-0 left-0 right-0 bg-white border-b border-gray-200 z-40 lg:hidden">
+    <header className="fixed top-0 left-0 right-0 bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 z-40 lg:hidden">
       <div className="flex items-center justify-between px-4 py-2 h-14">
         {/* Menu Button */}
         <button
           onClick={onMenuClick}
           type='button'
-          className="p-2 rounded-md hover:bg-gray-100 transition-colors"
+          className="p-2 rounded-md hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
           aria-label="Open navigation menu"
         >
-          <Menu className="w-5 h-5 text-gray-900" />
+          <Menu className="w-5 h-5 text-gray-900 dark:text-gray-100" />
         </button>
         
         {/* Logo */}

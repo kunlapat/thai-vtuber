@@ -15,7 +15,10 @@ interface RankingVideoCardProps {
 }
 
 // Format numbers for display
-const formatNumber = (num: number) => {
+const formatNumber = (num: number | null | undefined) => {
+  if (num === null || num === undefined || isNaN(num)) {
+    return '0';
+  }
   if (num >= 1000000) {
     return `${(num / 1000000).toFixed(1)}M`;
   } else if (num >= 1000) {
@@ -48,12 +51,12 @@ const getRankStyling = (rank: number) => {
 export default function RankingVideoCard({ video, rank, variant = 'list' }: RankingVideoCardProps) {
   if (variant === 'grid') {
     return (
-      <div className="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden hover:shadow-md transition-shadow duration-200 h-full group">
+      <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 overflow-hidden hover:shadow-md transition-shadow duration-200 h-full group">
         <Link
           href={`https://www.youtube.com/watch?v=${video.id}`}
           target="_blank"
           rel="noopener noreferrer"
-          className="block relative aspect-video bg-gray-100"
+          className="block relative aspect-video bg-gray-100 dark:bg-gray-700"
           prefetch={false}
         >
           <Image
@@ -86,14 +89,14 @@ export default function RankingVideoCard({ video, rank, variant = 'list' }: Rank
             className="block"
             prefetch={false}
           >
-            <h3 className="font-semibold text-sm text-gray-900 hover:text-blue-600 transition-colors leading-snug line-clamp-2">
+            <h3 className="font-semibold text-sm text-gray-900 dark:text-gray-100 hover:text-blue-600 dark:hover:text-blue-400 transition-colors leading-snug line-clamp-2">
               {video.title}
             </h3>
           </Link>
 
           <Link
             href={`/channel/${video.channel_id}`}
-            className="mt-2 text-xs text-gray-600 hover:text-gray-900 font-medium"
+            className="mt-2 text-xs text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100 font-medium"
             prefetch={false}
             onClick={() => sendGAEvent('event', 'channel_click', {
               channelId: video.channel_id
@@ -102,12 +105,12 @@ export default function RankingVideoCard({ video, rank, variant = 'list' }: Rank
             {video.channel_title}
           </Link>
 
-          <div className="mt-3 flex items-center gap-2 text-xs text-gray-600">
+          <div className="mt-3 flex items-center gap-2 text-xs text-gray-600 dark:text-gray-400">
             <Eye className="w-4 h-4" />
             <span>{formatNumber(video.view_count)} views</span>
           </div>
 
-          <div className="mt-2 text-[11px] text-gray-500">
+          <div className="mt-2 text-[11px] text-gray-500 dark:text-gray-500">
             <div>Published {formatDate(video.published_at)}</div>
           </div>
         </div>
@@ -116,7 +119,7 @@ export default function RankingVideoCard({ video, rank, variant = 'list' }: Rank
   }
 
   return (
-    <div className="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden hover:shadow-md transition-shadow duration-200">
+    <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 overflow-hidden hover:shadow-md transition-shadow duration-200">
       <div className="flex flex-col lg:flex-row">
         {/* Video Thumbnail */}
         <div className="lg:w-72 w-full flex-shrink-0">
@@ -124,7 +127,7 @@ export default function RankingVideoCard({ video, rank, variant = 'list' }: Rank
             href={`https://www.youtube.com/watch?v=${video.id}`}
             target="_blank"
             rel="noopener noreferrer"
-            className="block relative aspect-video bg-gray-100 rounded-lg overflow-hidden"
+            className="block relative aspect-video bg-gray-100 dark:bg-gray-700 rounded-lg overflow-hidden"
             prefetch={false}
           >
             <Image
@@ -161,7 +164,7 @@ export default function RankingVideoCard({ video, rank, variant = 'list' }: Rank
               className="block"
               prefetch={false}
             >
-              <h3 className="font-semibold text-gray-900 hover:text-blue-600 transition-colors mb-2 line-clamp-2">
+              <h3 className="font-semibold text-gray-900 dark:text-gray-100 hover:text-blue-600 dark:hover:text-blue-400 transition-colors mb-2 line-clamp-2">
                 {video.title}
               </h3>
             </Link>
@@ -175,7 +178,7 @@ export default function RankingVideoCard({ video, rank, variant = 'list' }: Rank
                 channelId: video.channel_id
               })}
             >
-              <span className="text-sm text-gray-600 group-hover:text-gray-900 font-medium">
+              <span className="text-sm text-gray-600 dark:text-gray-400 group-hover:text-gray-900 dark:group-hover:text-gray-100 font-medium">
                 {video.channel_title}
               </span>
             </Link>
@@ -183,14 +186,14 @@ export default function RankingVideoCard({ video, rank, variant = 'list' }: Rank
 
           {/* Stats */}
           <div className="space-y-2">
-            <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 text-sm text-gray-600">
+            <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 text-sm text-gray-600 dark:text-gray-400">
               <div className="flex items-center gap-1">
                 <Eye className="w-4 h-4" />
                 <span>{formatNumber(video.view_count)}</span>
               </div>
             </div>
             
-            <div className="text-xs text-gray-500">
+            <div className="text-xs text-gray-500 dark:text-gray-500">
               Published {formatDate(video.published_at)}
             </div>
           </div>

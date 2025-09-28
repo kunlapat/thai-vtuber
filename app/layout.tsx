@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { QueryProvider } from "@/components/QueryProvider";
+import { ThemeProvider } from "@/components/ThemeProvider";
 import { AppLayout } from "@/components/AppLayout";
 import { GoogleAnalytics } from '@next/third-parties/google'
 
@@ -45,17 +46,20 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
+      <meta name="theme-color" content="#ffffff" />
       {googleAnalyticId && (
         <GoogleAnalytics gaId={googleAnalyticId} />
       )}
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
-        <QueryProvider>
-          <AppLayout>
-            {children}
-          </AppLayout>
-        </QueryProvider>
+        <ThemeProvider>
+          <QueryProvider>
+            <AppLayout>
+              {children}
+            </AppLayout>
+          </QueryProvider>
+        </ThemeProvider>
       </body>
     </html>
   );

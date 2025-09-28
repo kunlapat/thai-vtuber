@@ -13,7 +13,10 @@ interface VideoGridProps {
 }
 
 // Format numbers for display
-const formatNumber = (num: number) => {
+const formatNumber = (num: number | null | undefined) => {
+  if (num === null || num === undefined || isNaN(num)) {
+    return '0';
+  }
   if (num >= 1000000) {
     return `${(num / 1000000).toFixed(1)}M`;
   } else if (num >= 1000) {

@@ -6,6 +6,9 @@ A comprehensive analytics dashboard for Thai VTuber channels, providing real-tim
 
 This fork adds quality-of-life improvements focused on data exploration and comparison, powered by Codex. Key updates include:
 
+- **Overall experience**
+  - Add dark mode for Tailwind
+
 - **Video page enhancements**
   - Switchable grid and list layouts for live & upcoming, and ranking tabs with compact cards surfacing viewer counts, scheduling, and channel context
 

@@ -16,6 +16,7 @@ import {
   Plus,
   Github
 } from 'lucide-react';
+import { ThemeToggle } from './ThemeToggle';
 
 interface SidebarProps {
   isCollapsed: boolean;
@@ -43,8 +44,8 @@ export const Sidebar = ({ isCollapsed, onToggle, isMobileOpen, onMobileToggle }:
         className={`
           flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium transition-colors
           ${isActive 
-            ? 'bg-blue-100 text-blue-700' 
-            : 'text-gray-700 hover:text-gray-900 hover:bg-gray-100'
+            ? 'bg-blue-100 dark:bg-blue-900 text-blue-700 dark:text-blue-300' 
+            : 'text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:hover:text-gray-100 hover:bg-gray-100 dark:hover:bg-gray-700'
           }
           ${isCollapsed && !mobile ? 'justify-center px-2' : ''}
         `}
@@ -70,13 +71,13 @@ export const Sidebar = ({ isCollapsed, onToggle, isMobileOpen, onMobileToggle }:
       {/* Desktop Sidebar */}
       <div 
         className={`
-          fixed left-0 top-0 h-full bg-white border-r border-gray-200 z-30 transition-all duration-300 ease-in-out
+          fixed left-0 top-0 h-full bg-white dark:bg-gray-800 border-r border-gray-200 dark:border-gray-700 z-30 transition-all duration-300 ease-in-out
           ${isCollapsed ? 'w-16' : 'w-64'}
           hidden lg:flex flex-col
         `}
       >
         {/* Header */}
-        <div className={`flex items-center p-4 border-b border-gray-200 ${
+        <div className={`flex items-center p-4 border-b border-gray-200 dark:border-gray-700 ${
           isCollapsed ? 'flex-col gap-2' : 'justify-between'
         }`}>
           <div className="flex items-center gap-2 justify-center">
@@ -93,10 +94,10 @@ export const Sidebar = ({ isCollapsed, onToggle, isMobileOpen, onMobileToggle }:
           <button
             onClick={onToggle}
             type='button'
-            className="p-1.5 rounded-md hover:bg-gray-100 transition-colors cursor-pointer text-gray-900"
+            className="p-1.5 rounded-md hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors cursor-pointer text-gray-900 dark:text-gray-100"
           >
             <ChevronLeft 
-              className={`w-4 h-4 transition-transform text-gray-900 cursor-pointer ${
+              className={`w-4 h-4 transition-transform text-gray-900 dark:text-gray-100 cursor-pointer ${
                 isCollapsed ? 'rotate-180' : ''
               }`} 
             />
@@ -116,14 +117,14 @@ export const Sidebar = ({ isCollapsed, onToggle, isMobileOpen, onMobileToggle }:
 
         {/* Submit Channel Section */}
         <div className="px-4 py-2">
-          <hr className="border-gray-200 mb-3" />
+          <hr className="border-gray-200 dark:border-gray-700 mb-3" />
           <Link
             href="https://vtuber.chuysan.com/#/register"
             target="_blank"
             rel="noopener noreferrer"
             className={`
               flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium transition-colors
-              text-gray-700 hover:text-gray-900 hover:bg-gray-100
+              text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:hover:text-gray-100 hover:bg-gray-100 dark:hover:bg-gray-700
               ${isCollapsed ? 'justify-center px-2' : ''}
             `}
             prefetch={false}
@@ -136,12 +137,12 @@ export const Sidebar = ({ isCollapsed, onToggle, isMobileOpen, onMobileToggle }:
           
           {/* GitHub Repository Link */}
           <Link
-            href="https://github.com/kerlos/thai-vtuber"
+            href="https://github.com/kunlapat/thai-vtuber"
             target="_blank"
             rel="noopener noreferrer"
             className={`
               flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium transition-colors
-              text-gray-700 hover:text-gray-900 hover:bg-gray-100 mt-2
+              text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:hover:text-gray-100 hover:bg-gray-100 dark:hover:bg-gray-700 mt-2
               ${isCollapsed ? 'justify-center px-2' : ''}
             `}
             prefetch={false}
@@ -153,22 +154,38 @@ export const Sidebar = ({ isCollapsed, onToggle, isMobileOpen, onMobileToggle }:
           </Link>
         </div>
 
+        {/* Theme Toggle */}
+        <div className="px-4 py-2">
+          <div className={`flex items-center ${isCollapsed ? 'justify-center' : 'justify-between'}`}>
+            {!isCollapsed && (
+              <span className="text-sm text-gray-700 dark:text-gray-300">Theme</span>
+            )}
+            <ThemeToggle />
+          </div>
+        </div>
+
         {/* Footer */}
-        <div className="p-4 border-t border-gray-200">
-          <div className={`flex items-center gap-2 text-sm text-gray-700 ${
+        <div className="p-4 border-t border-gray-200 dark:border-gray-700">
+          <div className={`flex items-center gap-2 text-sm text-gray-700 dark:text-gray-300 ${
             isCollapsed ? 'justify-center' : ''
           }`}>
             <Activity className="w-4 h-4" />
             {!isCollapsed && (
-              <Link
-                href="https://www.facebook.com/kerlosth"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="hover:underline"
-                prefetch={false}
-              >
-                Made by keRLos
-              </Link>
+              <div className="text-gray-500 dark:text-gray-400 text-xs">
+                <div>
+                  Forked from{' '}
+                  <Link
+                    href="https://www.facebook.com/kerlosth"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="hover:underline text-blue-600 dark:text-blue-400"
+                    prefetch={false}
+                  >
+                    keRLos
+                  </Link>
+                </div>
+                <div>Enhanced by kunlapat</div>
+              </div>
             )}
           </div>
         </div>
@@ -177,12 +194,12 @@ export const Sidebar = ({ isCollapsed, onToggle, isMobileOpen, onMobileToggle }:
       {/* Mobile Sidebar */}
       <div 
         className={`
-          fixed left-0 top-0 h-full w-64 bg-white border-r border-gray-200 z-50 transition-transform duration-300 ease-in-out lg:hidden
+          fixed left-0 top-0 h-full w-64 bg-white dark:bg-gray-800 border-r border-gray-200 dark:border-gray-700 z-50 transition-transform duration-300 ease-in-out lg:hidden
           ${isMobileOpen ? 'translate-x-0' : '-translate-x-full'}
         `}
       >
         {/* Mobile Header */}
-        <div className="flex items-center justify-between p-4 border-b border-gray-200">
+        <div className="flex items-center justify-between p-4 border-b border-gray-200 dark:border-gray-700">
           <div className="flex items-center gap-2">
             <Image 
               src="/images/logo.jpg" 
@@ -195,9 +212,9 @@ export const Sidebar = ({ isCollapsed, onToggle, isMobileOpen, onMobileToggle }:
           <button
             onClick={onMobileToggle}
             type='button'
-            className="p-1.5 rounded-md hover:bg-gray-100 transition-colors"
+            className="p-1.5 rounded-md hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
           >
-            <X className="w-4 h-4 text-gray-900" />
+            <X className="w-4 h-4 text-gray-900 dark:text-gray-100" />
           </button>
         </div>
 
@@ -214,13 +231,13 @@ export const Sidebar = ({ isCollapsed, onToggle, isMobileOpen, onMobileToggle }:
 
         {/* Mobile Submit Channel Section */}
         <div className="px-4 py-2">
-          <hr className="border-gray-200 mb-3" />
+          <hr className="border-gray-200 dark:border-gray-700 mb-3" />
           <Link
             href="https://vtuber.chuysan.com/#/register"
             target="_blank"
             rel="noopener noreferrer"
             onClick={onMobileToggle}
-            className="flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium transition-colors text-gray-700 hover:text-gray-900 hover:bg-gray-100"
+            className="flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium transition-colors text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:hover:text-gray-100 hover:bg-gray-100 dark:hover:bg-gray-700"
             prefetch={false}
           >
             <Plus className="w-5 h-5 flex-shrink-0" />
@@ -229,11 +246,11 @@ export const Sidebar = ({ isCollapsed, onToggle, isMobileOpen, onMobileToggle }:
           
           {/* GitHub Repository Link */}
           <Link
-            href="https://github.com/kerlos/thai-vtuber"
+            href="https://github.com/kunlapat/thai-vtuber"
             target="_blank"
             rel="noopener noreferrer"
             onClick={onMobileToggle}
-            className="flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium transition-colors text-gray-700 hover:text-gray-900 hover:bg-gray-100 mt-2"
+            className="flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium transition-colors text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:hover:text-gray-100 hover:bg-gray-100 dark:hover:bg-gray-700 mt-2"
             prefetch={false}
           >
             <Github className="w-5 h-5 flex-shrink-0" />
@@ -241,19 +258,33 @@ export const Sidebar = ({ isCollapsed, onToggle, isMobileOpen, onMobileToggle }:
           </Link>
         </div>
 
+        {/* Mobile Theme Toggle */}
+        <div className="px-4 py-2">
+          <div className="flex items-center justify-between">
+            <span className="text-sm text-gray-700 dark:text-gray-300">Theme</span>
+            <ThemeToggle />
+          </div>
+        </div>
+
         {/* Mobile Footer */}
-        <div className="p-4 border-t border-gray-200">
-          <div className="flex items-center gap-2 text-sm text-gray-700">
+        <div className="p-4 border-t border-gray-200 dark:border-gray-700">
+          <div className="flex items-center gap-2 text-sm text-gray-700 dark:text-gray-300">
             <Activity className="w-4 h-4" />
-            <Link
+          <div className="text-gray-500 dark:text-gray-400 text-xs">
+            <div>
+              Forked from{' '}
+              <Link
                 href="https://www.facebook.com/kerlosth"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="hover:underline"
+                className="hover:underline text-blue-600 dark:text-blue-400"
                 prefetch={false}
               >
-                Made by keRLos
+                keRLos
               </Link>
+            </div>
+            <div>Enhanced by kunlapat</div>
+          </div>
           </div>
         </div>
       </div>

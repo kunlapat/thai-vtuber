@@ -1305,10 +1305,10 @@ export const VTuberCharts = ({ channels }: VTuberChartsProps) => {
               onFocus={() => setIsScatterSuggestionOpen(true)}
               onBlur={handleScatterSearchBlur}
               placeholder="Search for VTuber channels here..."
-              className="w-full rounded-md border border-gray-300 p-2 text-sm text-gray-900 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 placeholder:text-gray-500"
+              className="w-full rounded-md border border-gray-300 dark:border-gray-600 p-2 text-sm text-gray-900 dark:text-gray-100 bg-white dark:bg-gray-700 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 placeholder:text-gray-500 dark:placeholder:text-gray-400"
             />
             {isScatterSuggestionOpen && scatterSuggestions.length > 0 && scatterSearchTerm.trim() !== '' && (
-              <ul className="absolute z-10 mt-1 max-h-48 w-full overflow-y-auto rounded-md border border-gray-200 bg-white shadow-lg">
+              <ul className="absolute z-10 mt-1 max-h-48 w-full overflow-y-auto rounded-md border border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-800 shadow-lg">
                 {scatterSuggestions.map(name => (
                   <li key={name}>
                     <button
@@ -1317,7 +1317,7 @@ export const VTuberCharts = ({ channels }: VTuberChartsProps) => {
                         event.preventDefault();
                         handleScatterSelectChannel(name);
                       }}
-                      className="w-full px-3 py-2 text-left text-sm text-gray-700 hover:bg-blue-50"
+                      className="w-full px-3 py-2 text-left text-sm text-gray-700 dark:text-gray-300 hover:bg-blue-50 dark:hover:bg-gray-700"
                     >
                       {name}
                     </button>
@@ -1363,12 +1363,14 @@ export const VTuberCharts = ({ channels }: VTuberChartsProps) => {
               dataKey="subscribers"
               type="number"
               tickFormatter={formatNumber}
+              tick={{ fontSize: 12, fill: 'var(--chart-text-color, #374151)' }}
               name="Subscribers"
             />
             <YAxis
               dataKey="views"
               type="number"
               tickFormatter={formatNumber}
+              tick={{ fontSize: 12, fill: 'var(--chart-text-color, #374151)' }}
               name="Views"
             />
             <ZAxis
@@ -1384,11 +1386,11 @@ export const VTuberCharts = ({ channels }: VTuberChartsProps) => {
                 if (active && payload && payload.length) {
                   const data = payload[0].payload;
                   return (
-                    <div className="bg-white p-3 border rounded shadow-lg">
-                      <p className="text-sm font-medium text-black">{data.name}</p>
-                      <p className="text-sm text-black">Subscribers: {formatNumber(data.subscribers || 0)}</p>
-                      <p className="text-sm text-black">Views: {formatNumber(data.views || 0)}</p>
-                      <p className="text-sm text-black">Ratio: {(data.ratio || 0).toFixed(1)} views/subscriber</p>
+                    <div className="bg-white dark:bg-gray-800 p-3 border border-gray-200 dark:border-gray-600 rounded shadow-lg">
+                      <p className="text-sm font-medium text-gray-900 dark:text-gray-100">{data.name}</p>
+                      <p className="text-sm text-gray-700 dark:text-gray-300">Subscribers: {formatNumber(data.subscribers || 0)}</p>
+                      <p className="text-sm text-gray-700 dark:text-gray-300">Views: {formatNumber(data.views || 0)}</p>
+                      <p className="text-sm text-gray-700 dark:text-gray-300">Ratio: {(data.ratio || 0).toFixed(1)} views/subscriber</p>
                     </div>
                   );
                 }
@@ -1472,6 +1474,7 @@ export const VTuberCharts = ({ channels }: VTuberChartsProps) => {
                 dataKey="tenureYears"
                 name="Channel Age"
                 tickFormatter={(value: number) => `${value < 5 ? value.toFixed(1) : Math.round(value)}y`}
+                tick={{ fontSize: 12, fill: 'var(--chart-text-color, #374151)' }}
                 domain={[0, 'dataMax']}
               />
               <YAxis
@@ -1479,6 +1482,7 @@ export const VTuberCharts = ({ channels }: VTuberChartsProps) => {
                 dataKey="subscribers"
                 name="Subscribers"
                 tickFormatter={formatNumber}
+                tick={{ fontSize: 12, fill: 'var(--chart-text-color, #374151)' }}
               />
               <ZAxis
                 type="number"
@@ -1492,12 +1496,12 @@ export const VTuberCharts = ({ channels }: VTuberChartsProps) => {
                   if (active && payload && payload.length) {
                     const data = payload[0].payload as typeof filteredTenureData[number];
                     return (
-                      <div className="bg-white p-3 border rounded shadow-lg">
-                        <p className="text-sm font-medium text-black">{data.name}</p>
-                        <p className="text-sm text-black">Channel age: {data.tenureYears.toFixed(1)} years</p>
-                        <p className="text-sm text-black">Subscribers: {formatNumber(data.subscribers)}</p>
-                        <p className="text-sm text-black">Views: {formatNumber(data.views)}</p>
-                        <p className="text-sm text-black">Active: {data.isActive ? 'Yes' : 'No'}</p>
+                      <div className="bg-white dark:bg-gray-800 p-3 border border-gray-200 dark:border-gray-600 rounded shadow-lg">
+                        <p className="text-sm font-medium text-gray-900 dark:text-gray-100">{data.name}</p>
+                        <p className="text-sm text-gray-700 dark:text-gray-300">Channel age: {data.tenureYears.toFixed(1)} years</p>
+                        <p className="text-sm text-gray-700 dark:text-gray-300">Subscribers: {formatNumber(data.subscribers)}</p>
+                        <p className="text-sm text-gray-700 dark:text-gray-300">Views: {formatNumber(data.views)}</p>
+                        <p className="text-sm text-gray-700 dark:text-gray-300">Active: {data.isActive ? 'Yes' : 'No'}</p>
                       </div>
                     );
                   }
@@ -1577,11 +1581,12 @@ export const VTuberCharts = ({ channels }: VTuberChartsProps) => {
             <ResponsiveContainer width="100%" height={320}>
               <ComposedChart data={filteredCreationData} margin={{ top: 20, right: 32, left: 16, bottom: 20 }}>
                 <CartesianGrid strokeDasharray="3 3" />
-                <XAxis dataKey="year" tick={{ fontSize: 12 }} />
+                <XAxis dataKey="year" tick={{ fontSize: 12, fill: 'var(--chart-text-color, #374151)' }} />
                 <YAxis
                   yAxisId="yearly"
                   allowDecimals={false}
                   tickFormatter={formatNumber}
+                  tick={{ fontSize: 12, fill: 'var(--chart-text-color, #374151)' }}
                   domain={[0, creationBarMax === 0 ? 5 : Math.ceil(creationBarMax * 1.2)]}
                 />
                 <YAxis
@@ -1589,6 +1594,7 @@ export const VTuberCharts = ({ channels }: VTuberChartsProps) => {
                   orientation="right"
                   allowDecimals={false}
                   tickFormatter={formatNumber}
+                  tick={{ fontSize: 12, fill: 'var(--chart-text-color, #374151)' }}
                   domain={[0, creationLineMax === 0 ? 10 : Math.ceil(creationLineMax * 1.05)]}
                 />
                 <Tooltip
@@ -1608,11 +1614,11 @@ export const VTuberCharts = ({ channels }: VTuberChartsProps) => {
                     const activeShareValue = typeof activeShareEntry?.value === 'number' ? activeShareEntry.value : 0;
 
                     return (
-                      <div className="bg-white p-3 border rounded shadow-lg">
-                        <p className="text-sm font-semibold text-black">{label}</p>
-                        <p className="text-sm text-black">New channels: {formatNumber(yearlyValue)}</p>
-                        <p className="text-sm text-black">Still active: {formatNumber(activeValue)} ({activeShareValue.toFixed(1)}%)</p>
-                        <p className="text-sm text-black">Cumulative total: {formatNumber(cumulativeValue)}</p>
+                      <div className="bg-white dark:bg-gray-800 p-3 border border-gray-200 dark:border-gray-600 rounded shadow-lg">
+                        <p className="text-sm font-semibold text-gray-900 dark:text-gray-100">{label}</p>
+                        <p className="text-sm text-gray-700 dark:text-gray-300">New channels: {formatNumber(yearlyValue)}</p>
+                        <p className="text-sm text-gray-700 dark:text-gray-300">Still active: {formatNumber(activeValue)} ({activeShareValue.toFixed(1)}%)</p>
+                        <p className="text-sm text-gray-700 dark:text-gray-300">Cumulative total: {formatNumber(cumulativeValue)}</p>
                       </div>
                     );
                   }}
@@ -1673,17 +1679,19 @@ export const VTuberCharts = ({ channels }: VTuberChartsProps) => {
           <ResponsiveContainer width="100%" height={320}>
             <ComposedChart data={chartData.engagementData} margin={{ top: 20, right: 32, left: 16, bottom: 20 }}>
               <CartesianGrid strokeDasharray="3 3" />
-              <XAxis dataKey="range" tick={{ fontSize: 12 }} />
+              <XAxis dataKey="range" tick={{ fontSize: 12, fill: 'var(--chart-text-color, #374151)' }} />
               <YAxis
                 yAxisId="count"
                 allowDecimals={false}
                 tickFormatter={formatNumber}
+                tick={{ fontSize: 12, fill: 'var(--chart-text-color, #374151)' }}
                 domain={[0, engagementTotals.total === 0 ? 10 : Math.ceil(engagementTotals.total * 0.4)]}
               />
               <YAxis
                 yAxisId="share"
                 orientation="right"
                 tickFormatter={(value: number) => `${value}%`}
+                tick={{ fontSize: 12, fill: 'var(--chart-text-color, #374151)' }}
                 domain={[0, 100]}
               />
               <Tooltip
@@ -1698,10 +1706,10 @@ export const VTuberCharts = ({ channels }: VTuberChartsProps) => {
                   const shareValue = typeof shareEntry?.value === 'number' ? shareEntry.value : 0;
 
                   return (
-                    <div className="bg-white p-3 border rounded shadow-lg">
-                      <p className="text-sm font-semibold text-black">{label}</p>
-                      <p className="text-sm text-black">Channels: {formatNumber(countValue)}</p>
-                      <p className="text-sm text-black">Share: {shareValue.toFixed(1)}%</p>
+                    <div className="bg-white dark:bg-gray-800 p-3 border border-gray-200 dark:border-gray-600 rounded shadow-lg">
+                      <p className="text-sm font-semibold text-gray-900 dark:text-gray-100">{label}</p>
+                      <p className="text-sm text-gray-700 dark:text-gray-300">Channels: {formatNumber(countValue)}</p>
+                      <p className="text-sm text-gray-700 dark:text-gray-300">Share: {shareValue.toFixed(1)}%</p>
                     </div>
                   );
                 }}
@@ -1773,8 +1781,8 @@ export const VTuberCharts = ({ channels }: VTuberChartsProps) => {
           <ResponsiveContainer width="100%" height={340}>
             <ComposedChart data={tierActivityChartData} margin={{ top: 20, right: 30, left: 20, bottom: 20 }}>
               <CartesianGrid strokeDasharray="3 3" />
-              <XAxis dataKey="name" tick={{ fontSize: 12 }} interval={0} height={70} angle={-20} textAnchor="end" />
-              <YAxis allowDecimals={false} tick={{ fontSize: 12 }} />
+              <XAxis dataKey="name" tick={{ fontSize: 12, fill: 'var(--chart-text-color, #374151)' }} interval={0} height={70} angle={-20} textAnchor="end" />
+              <YAxis allowDecimals={false} tick={{ fontSize: 12, fill: 'var(--chart-text-color, #374151)' }} />
               <Tooltip
                 content={({ active, payload, label }) => {
                   if (!active || !payload || payload.length === 0) {
@@ -1794,12 +1802,12 @@ export const VTuberCharts = ({ channels }: VTuberChartsProps) => {
                   const share = total > 0 ? (activeValue / total) * 100 : 0;
 
                   return (
-                    <div className="bg-white p-3 border rounded shadow-lg">
-                      <p className="text-sm font-semibold text-black">{label}</p>
-                      <p className="text-sm text-black">Channels: {formatNumber(total)}</p>
-                      <p className="text-sm text-black">Active: {formatNumber(activeValue)} ({share.toFixed(1)}%)</p>
-                      <p className="text-sm text-black">Inactive: {formatNumber(inactiveValue)}</p>
-                      <p className="text-sm text-black">Benchmark: {benchmarkValue.toFixed(1)}%</p>
+                    <div className="bg-white dark:bg-gray-800 p-3 border border-gray-200 dark:border-gray-600 rounded shadow-lg">
+                      <p className="text-sm font-semibold text-gray-900 dark:text-gray-100">{label}</p>
+                      <p className="text-sm text-gray-700 dark:text-gray-300">Channels: {formatNumber(total)}</p>
+                      <p className="text-sm text-gray-700 dark:text-gray-300">Active: {formatNumber(activeValue)} ({share.toFixed(1)}%)</p>
+                      <p className="text-sm text-gray-700 dark:text-gray-300">Inactive: {formatNumber(inactiveValue)}</p>
+                      <p className="text-sm text-gray-700 dark:text-gray-300">Benchmark: {benchmarkValue.toFixed(1)}%</p>
                     </div>
                   );
                 }}
@@ -1810,7 +1818,7 @@ export const VTuberCharts = ({ channels }: VTuberChartsProps) => {
                   dataKey="total"
                   position="top"
                   offset={6}
-                  style={{ fill: '#475569', fontSize: 11 }}
+                  style={{ fill: 'var(--chart-text-color, #374151)', fontSize: 11 }}
                   formatter={(value) => {
                     const numericValue = typeof value === 'number' ? value : Number(value);
                     if (!Number.isFinite(numericValue)) {
@@ -1897,12 +1905,13 @@ export const VTuberCharts = ({ channels }: VTuberChartsProps) => {
                   tickFormatter={selectedTopChannelMetric?.axisTickFormatter}
                   domain={[0, topChannelsDomainMax]}
                   height={40}
+                  tick={{ fontSize: 12, fill: 'var(--chart-text-color, #374151)' }}
                 />
                 <YAxis
                   type="category"
                   dataKey="name"
                   width={200}
-                  tick={{ fontSize: 12 }}
+                  tick={{ fontSize: 12, fill: 'var(--chart-text-color, #374151)' }}
                 />
                 <Tooltip
                   cursor={{ fill: 'rgba(14, 116, 144, 0.08)' }}
@@ -1910,18 +1919,18 @@ export const VTuberCharts = ({ channels }: VTuberChartsProps) => {
                     if (active && payload && payload.length) {
                       const data = payload[0].payload as typeof topChannelsData[number];
                       return (
-                        <div className="bg-white p-3 border rounded shadow-lg">
-                          <p className="text-sm font-semibold text-black">{data.fullName}</p>
-                          <p className="text-sm text-black">Tier: {data.tierLabel}</p>
+                        <div className="bg-white dark:bg-gray-800 p-3 border border-gray-200 dark:border-gray-600 rounded shadow-lg">
+                          <p className="text-sm font-semibold text-gray-900 dark:text-gray-100">{data.fullName}</p>
+                          <p className="text-sm text-gray-700 dark:text-gray-300">Tier: {data.tierLabel}</p>
                           {selectedTopChannelMetric && (
-                            <p className="text-sm text-black">
+                            <p className="text-sm text-gray-700 dark:text-gray-300">
                               {selectedTopChannelMetric.label}:{' '}
                               {selectedTopChannelMetric.valueFormatter(data.metricValue)}
                             </p>
                           )}
-                          <p className="text-sm text-black">Subscribers: {formatNumber(data.subscribers)}</p>
-                          <p className="text-sm text-black">Total views: {formatNumber(data.views)}</p>
-                          <p className="text-sm text-black">Engagement: {data.engagementRate.toFixed(1)} views/sub</p>
+                          <p className="text-sm text-gray-700 dark:text-gray-300">Subscribers: {formatNumber(data.subscribers)}</p>
+                          <p className="text-sm text-gray-700 dark:text-gray-300">Total views: {formatNumber(data.views)}</p>
+                          <p className="text-sm text-gray-700 dark:text-gray-300">Engagement: {data.engagementRate.toFixed(1)} views/sub</p>
                         </div>
                       );
                     }
@@ -1933,7 +1942,7 @@ export const VTuberCharts = ({ channels }: VTuberChartsProps) => {
                     dataKey="metricValue"
                     position="right"
                     offset={8}
-                    style={{ fill: '#334155', fontSize: 12 }}
+                    style={{ fill: 'var(--chart-text-color, #374151)', fontSize: 12 }}
                     formatter={(value) => {
                       if (!selectedTopChannelMetric) {
                         return value;
@@ -2008,6 +2017,7 @@ export const VTuberCharts = ({ channels }: VTuberChartsProps) => {
               <XAxis
                 type="number"
                 tickFormatter={(value: number) => `${Math.round(value)}x`}
+                tick={{ fontSize: 12, fill: 'var(--chart-text-color, #374151)' }}
                 domain={[0, 'dataMax']}
                 height={40}
               />
@@ -2015,7 +2025,7 @@ export const VTuberCharts = ({ channels }: VTuberChartsProps) => {
                 type="category"
                 dataKey="name"
                 width={170}
-                tick={{ fontSize: 12 }}
+                tick={{ fontSize: 12, fill: 'var(--chart-text-color, #374151)' }}
               />
               <Tooltip
                 cursor={{ fill: 'rgba(59, 130, 246, 0.08)' }}
@@ -2023,12 +2033,12 @@ export const VTuberCharts = ({ channels }: VTuberChartsProps) => {
                   if (active && payload && payload.length) {
                     const data = payload[0].payload as typeof filteredGrowthPotentialChannels[number];
                     return (
-                      <div className="bg-white p-3 border rounded shadow-lg">
-                        <p className="text-sm font-semibold text-black">{data.fullName}</p>
-                        <p className="text-sm text-black">Tier: {data.tierLabel}</p>
-                        <p className="text-sm text-black">Subscribers: {formatNumber(data.subscribers)}</p>
-                        <p className="text-sm text-black">Total views: {formatNumber(data.views)}</p>
-                        <p className="text-sm text-black">Engagement: {data.engagementRate.toFixed(1)} views/sub</p>
+                      <div className="bg-white dark:bg-gray-800 p-3 border border-gray-200 dark:border-gray-600 rounded shadow-lg">
+                        <p className="text-sm font-semibold text-gray-900 dark:text-gray-100">{data.fullName}</p>
+                        <p className="text-sm text-gray-700 dark:text-gray-300">Tier: {data.tierLabel}</p>
+                        <p className="text-sm text-gray-700 dark:text-gray-300">Subscribers: {formatNumber(data.subscribers)}</p>
+                        <p className="text-sm text-gray-700 dark:text-gray-300">Total views: {formatNumber(data.views)}</p>
+                        <p className="text-sm text-gray-700 dark:text-gray-300">Engagement: {data.engagementRate.toFixed(1)} views/sub</p>
                       </div>
                     );
                   }
@@ -2110,17 +2120,19 @@ export const VTuberCharts = ({ channels }: VTuberChartsProps) => {
             <ResponsiveContainer width="100%" height={320}>
               <ComposedChart data={freshnessChartData} margin={{ top: 20, right: 32, left: 16, bottom: 20 }}>
                 <CartesianGrid strokeDasharray="3 3" />
-                <XAxis dataKey="range" tick={{ fontSize: 12 }} />
+                <XAxis dataKey="range" tick={{ fontSize: 12, fill: 'var(--chart-text-color, #374151)' }} />
                 <YAxis
                   yAxisId="count"
                   allowDecimals={false}
                   tickFormatter={formatNumber}
+                  tick={{ fontSize: 12, fill: 'var(--chart-text-color, #374151)' }}
                   domain={[0, freshnessChartMaxCount === 0 ? 10 : Math.ceil(freshnessChartMaxCount * 1.1)]}
                 />
                 <YAxis
                   yAxisId="share"
                   orientation="right"
                   tickFormatter={(value: number) => `${value}%`}
+                  tick={{ fontSize: 12, fill: 'var(--chart-text-color, #374151)' }}
                   domain={[0, 100]}
                 />
                 <Tooltip
@@ -2135,10 +2147,10 @@ export const VTuberCharts = ({ channels }: VTuberChartsProps) => {
                     const percentageValue = typeof percentageEntry?.value === 'number' ? percentageEntry.value : 0;
 
                     return (
-                      <div className="bg-white p-3 border rounded shadow-lg">
-                        <p className="text-sm font-semibold text-black">{label}</p>
-                        <p className="text-sm text-black">Channels: {formatNumber(countValue)}</p>
-                        <p className="text-sm text-black">Share: {percentageValue.toFixed(1)}%</p>
+                      <div className="bg-white dark:bg-gray-800 p-3 border border-gray-200 dark:border-gray-600 rounded shadow-lg">
+                        <p className="text-sm font-semibold text-gray-900 dark:text-gray-100">{label}</p>
+                        <p className="text-sm text-gray-700 dark:text-gray-300">Channels: {formatNumber(countValue)}</p>
+                        <p className="text-sm text-gray-700 dark:text-gray-300">Share: {percentageValue.toFixed(1)}%</p>
                       </div>
                     );
                   }}

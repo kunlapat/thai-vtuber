@@ -148,7 +148,7 @@ export default function ChannelChart({ channelId }: ChannelChartProps) {
             <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
             <XAxis
               dataKey="displayDate"
-              stroke="#666"
+              stroke="var(--chart-text-color, #666)"
               fontSize={11}
               tickLine={false}
               angle={-45}
