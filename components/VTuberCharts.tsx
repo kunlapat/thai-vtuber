@@ -123,6 +123,25 @@ const FRESHNESS_PRESETS = [
 
 type FreshnessPresetId = typeof FRESHNESS_PRESETS[number]['id'];
 
+const FRESHNESS_BUCKET_COLORS: Record<string, string> = {
+  '0_7': '#059669',
+  '8_30': '#10b981',
+  '31_90': '#0ea5e9',
+  '91_180': '#6366f1',
+  '181_365': '#f97316',
+  '365_plus': '#ef4444',
+};
+
+type FreshnessSegment = {
+  id: string;
+  label: string;
+  value: number;
+  share: number;
+  color: string;
+  active: number;
+  inactive: number;
+};
+
 const CREATION_RANGE_OPTIONS = [
   {
     id: 'last5',
@@ -541,6 +560,12 @@ export const VTuberCharts = ({ channels }: VTuberChartsProps) => {
   const [topChannelMetricId, setTopChannelMetricId] = useState<TopChannelMetricId>('subscribers');
   const [selectedFreshnessPresetId, setSelectedFreshnessPresetId] = useState<FreshnessPresetId>('all');
   const [creationRangeId, setCreationRangeId] = useState<CreationRangeId>('last10');
+  const [tenureActivityFilter, setTenureActivityFilter] = useState<{ active: boolean; inactive: boolean }>({
+    active: true,
+    inactive: false,
+  });
+  const toggleTenureActivity = (key: 'active' | 'inactive') =>
+    setTenureActivityFilter(prev => ({ ...prev, [key]: !prev[key] }));
 
   const selectedGrowthPreset = useMemo(() => {
     return GROWTH_PRESETS.find(preset => preset.id === selectedGrowthPresetId) ?? GROWTH_PRESETS[0];
@@ -756,6 +781,69 @@ export const VTuberCharts = ({ channels }: VTuberChartsProps) => {
   const freshnessSummary = freshnessDerived.summary;
   const creationSummary = chartData.yearlyActivitySummary;
 
+  const activityFreshness = useMemo(() => {
+    const buckets = chartData.contentFreshnessBuckets;
+    const total = buckets.reduce((sum, bucket) => sum + bucket.total, 0);
+
+    if (total === 0) {
+      return {
+        segments: [] as FreshnessSegment[],
+        total: 0,
+        dominant: null as FreshnessSegment | null,
+      };
+    }
+
+    const segments = buckets
+      .filter(bucket => bucket.total > 0)
+      .map<FreshnessSegment>(bucket => ({
+        id: bucket.id,
+        label: bucket.label,
+        value: bucket.total,
+        share: parseFloat(((bucket.total / total) * 100).toFixed(1)),
+        color: FRESHNESS_BUCKET_COLORS[bucket.id] ?? '#94a3b8',
+        active: bucket.active,
+        inactive: bucket.inactive,
+      }));
+
+    const dominant = segments.reduce<FreshnessSegment | null>((top, segment) => {
+      if (!top || segment.value > top.value) {
+        return segment;
+      }
+      return top;
+    }, null);
+
+    return {
+      segments,
+      total,
+      dominant,
+    };
+  }, [chartData.contentFreshnessBuckets]);
+
+  const activityTrend = useMemo(() => {
+    if (chartData.activitySummary.total === 0) {
+      return null;
+    }
+
+    const currentYear = new Date().getFullYear();
+    const previousYearEntry = [...chartData.yearlyActivity]
+      .reverse()
+      .find(entry => entry.year < currentYear && Number.isFinite(entry.activeShare));
+
+    if (!previousYearEntry || typeof previousYearEntry.activeShare !== 'number') {
+      return null;
+    }
+
+    const diff = parseFloat(
+      (chartData.activitySummary.activePercentage - previousYearEntry.activeShare).toFixed(1)
+    );
+
+    return {
+      diff,
+      baselineYear: previousYearEntry.year,
+      baselineShare: previousYearEntry.activeShare,
+    };
+  }, [chartData.activitySummary.activePercentage, chartData.activitySummary.total, chartData.yearlyActivity]);
+
   const filteredCreationData = useMemo(() => {
     const data = chartData.yearlyActivity;
     if (data.length === 0) {
@@ -890,15 +978,14 @@ export const VTuberCharts = ({ channels }: VTuberChartsProps) => {
 
   const filteredTenureData = useMemo(() => {
     const activeFilters = TENURE_FILTERS.filter(filter => selectedTenureFilters.includes(filter.id));
+    if (activeFilters.length === 0) return [];
 
-    if (activeFilters.length === 0) {
-      return [];
-    }
-
-    return chartData.tenurePerformanceData.filter(item =>
-      activeFilters.some(filter => item.tenureYears >= filter.min && item.tenureYears < filter.max)
-    );
-  }, [chartData.tenurePerformanceData, selectedTenureFilters]);
+    return chartData.tenurePerformanceData
+      .filter(item =>
+        activeFilters.some(filter => item.tenureYears >= filter.min && item.tenureYears < filter.max)
+      )
+      .filter(item => (item.isActive && tenureActivityFilter.active) || (!item.isActive && tenureActivityFilter.inactive));
+  }, [chartData.tenurePerformanceData, selectedTenureFilters, tenureActivityFilter]);
 
   const tenureSubscriberStats = useMemo(() => {
     if (chartData.tenurePerformanceData.length === 0) {
@@ -992,57 +1079,137 @@ export const VTuberCharts = ({ channels }: VTuberChartsProps) => {
     <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-2 gap-6">
       {/* Activity Status Distribution Pie Chart */}
       <div className="order-1 bg-white p-6 rounded-lg shadow-md border border-gray-200">
-        <h3 className="text-lg font-semibold mb-4 text-gray-900">Channel Activity Status</h3>
-        <div className="flex flex-col gap-6 md:flex-row md:items-center">
-          <div className="relative mx-auto h-64 w-64 flex-shrink-0">
-            <ResponsiveContainer width="100%" height="100%">
-              <PieChart>
-                <Pie
-                  data={chartData.activityData}
-                  innerRadius={60}
-                  outerRadius={90}
-                  dataKey="value"
-                  paddingAngle={4}
-                  stroke="none"
-                >
-                  {chartData.activityData.map(item => (
-                    <Cell key={item.id} fill={item.color} />
-                  ))}
-                </Pie>
-                <Tooltip
-                  formatter={(value: number, name: string, props) => {
-                    const dataKey = (props?.payload as { id?: string })?.id;
-                    const segment = chartData.activityData.find(entry => entry.id === dataKey);
-                    const label = segment ? `${segment.name}` : name;
-                    return [`${formatNumber(value || 0)} channels`, label];
-                  }}
-                  labelFormatter={() => 'Activity'}
-                  contentStyle={{ backgroundColor: 'white', border: '1px solid #ccc', borderRadius: '4px', color: 'black' }}
-                  labelStyle={{ color: 'black' }}
-                />
-              </PieChart>
-            </ResponsiveContainer>
-            <div className="pointer-events-none absolute inset-0 flex flex-col items-center justify-center text-center">
-              <span className="text-3xl font-semibold text-gray-900">{chartData.activitySummary.activePercentage}%</span>
-              <span className="text-xs uppercase tracking-wide text-gray-500">Active share</span>
-              <span className="mt-1 text-xs text-gray-400">{formatNumber(chartData.activitySummary.total)} channels</span>
-            </div>
+        <div className="flex items-start justify-between gap-4">
+          <div>
+            <h3 className="text-lg font-semibold text-gray-900">Channel Activity Status</h3>
+            <p className="mt-1 text-sm text-gray-500">Upload recency and overall activity mix</p>
           </div>
-          <div className="flex-1 space-y-3">
-            {chartData.activityData.map(item => (
-              <div key={item.id} className="flex items-center justify-between rounded-md border border-gray-200 px-3 py-2">
-                <div className="flex items-center gap-3">
-                  <span className="h-2.5 w-2.5 rounded-full" style={{ backgroundColor: item.color }} />
-                  <span className="text-sm font-medium text-gray-900">{item.name}</span>
+          {activityTrend && (
+            <span
+              className={`rounded-full px-3 py-1 text-xs font-medium ${
+                activityTrend.diff >= 0
+                  ? 'bg-emerald-50 text-emerald-700'
+                  : 'bg-rose-50 text-rose-700'
+              }`}
+            >
+              {activityTrend.diff >= 0 ? '+' : ''}
+              {activityTrend.diff.toFixed(1)} pts vs {activityTrend.baselineYear}
+            </span>
+          )}
+        </div>
+
+        {activityFreshness.total === 0 ? (
+          <>
+            <div className="mt-6 flex h-56 items-center justify-center rounded border border-dashed border-gray-200 bg-gray-50 text-sm text-gray-500">
+              No recent upload data yet.
+            </div>
+            <div className="mt-6 grid gap-2 sm:grid-cols-2">
+              {chartData.activityData.map(item => (
+                <div key={item.id} className="flex items-center justify-between rounded-md border border-gray-200 bg-gray-50 px-3 py-2 text-sm">
+                  <div className="flex items-center gap-2 font-medium text-gray-900">
+                    <span className="h-2.5 w-2.5 rounded-full" style={{ backgroundColor: item.color }} />
+                    {item.name}
+                  </div>
+                  <div className="text-right text-xs text-gray-600">
+                    <div className="font-semibold text-gray-900">{formatNumber(item.value)}</div>
+                    <div>{item.percentage}%</div>
+                  </div>
                 </div>
-                <div className="text-right text-sm">
-                  <div className="font-semibold text-gray-900">{formatNumber(item.value)}</div>
-                  <div className="text-xs text-gray-500">{item.percentage}%</div>
+              ))}
+            </div>
+          </>
+        ) : (
+          <div className="mt-6 flex flex-col gap-6 md:flex-row md:items-start">
+            <div className="relative mx-auto h-64 w-64 flex-shrink-0">
+              <ResponsiveContainer width="100%" height="100%">
+                <PieChart>
+                  <Pie
+                    data={activityFreshness.segments}
+                    innerRadius={60}
+                    outerRadius={92}
+                    dataKey="value"
+                    paddingAngle={3}
+                    stroke="none"
+                  >
+                    {activityFreshness.segments.map(segment => (
+                      <Cell key={segment.id} fill={segment.color} />
+                    ))}
+                  </Pie>
+                  <Tooltip
+                    formatter={(value: number, _name: string, tooltipItem) => {
+                      const segment = tooltipItem?.payload as FreshnessSegment | undefined;
+                      const label = segment ? segment.label : 'Upload recency';
+                      const share = segment ? `${segment.share.toFixed(1)}%` : null;
+                      const display = `${formatNumber(typeof value === 'number' ? value : 0)} channels`;
+                      return share ? [display, `${label} (${share})`] : [display, label];
+                    }}
+                    labelFormatter={() => 'Upload recency'}
+                    contentStyle={{ backgroundColor: 'white', border: '1px solid #ccc', borderRadius: '4px', color: 'black' }}
+                    labelStyle={{ color: 'black' }}
+                  />
+                </PieChart>
+              </ResponsiveContainer>
+              <div className="pointer-events-none absolute inset-0 flex flex-col items-center justify-center text-center">
+                <span className="text-3xl font-semibold text-gray-900">
+                  {chartData.activitySummary.activePercentage}%
+                </span>
+                <span className="mt-1 text-xs uppercase tracking-wide text-gray-500">Active share</span>
+              </div>
+              <div className="mt-4 flex flex-col items-center space-y-1 text-center text-xs text-gray-600">
+                {activityFreshness.dominant ? (
+                  <div>
+                    Most common: {activityFreshness.dominant.label} ({activityFreshness.dominant.share}%)
+                  </div>
+                ) : null}
+                <div className="text-gray-400">
+                  {formatNumber(activityFreshness.total)} channels with upload history
                 </div>
               </div>
-            ))}
+            </div>
+            <div className="flex-1 space-y-4">
+              <div className="grid gap-2 sm:grid-cols-2">
+                {chartData.activityData.map(item => (
+                  <div key={item.id} className="flex items-center justify-between rounded-md border border-gray-200 bg-gray-50 px-3 py-2 text-sm">
+                    <div className="flex items-center gap-2 font-medium text-gray-900">
+                      <span className="h-2.5 w-2.5 rounded-full" style={{ backgroundColor: item.color }} />
+                      {item.name}
+                    </div>
+                    <div className="text-right text-xs text-gray-600">
+                      <div className="font-semibold text-gray-900">{formatNumber(item.value)}</div>
+                      <div>{item.percentage}%</div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+              <div className="grid gap-2 sm:grid-cols-2">
+                {activityFreshness.segments.map(segment => (
+                  <div key={segment.id} className="flex flex-col gap-2 rounded-md border border-gray-200 px-3 py-3 text-sm">
+                    <div className="flex items-center justify-between gap-3">
+                      <span className="flex items-center gap-2 font-medium text-gray-900">
+                        <span className="h-2 w-2 rounded-full" style={{ backgroundColor: segment.color }} />
+                        {segment.label}
+                      </span>
+                      <span className="text-xs text-gray-600">{segment.share}%</span>
+                    </div>
+                    <div className="flex items-center justify-between text-xs text-gray-600">
+                      <span className="font-semibold text-gray-900">{formatNumber(segment.value)} channels</span>
+                      <div className="flex items-center gap-3">
+                        <span className="inline-flex items-center gap-1">
+                          <span className="inline-flex h-1.5 w-1.5 rounded-full bg-emerald-400" />
+                          {formatNumber(segment.active)}
+                        </span>
+                        <span className="inline-flex items-center gap-1">
+                          <span className="inline-flex h-1.5 w-1.5 rounded-full bg-slate-400" />
+                          {formatNumber(segment.inactive)}
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
           </div>
-        </div>
+        )}
       </div>
 
       {/* Channel Size Categories */}
@@ -1271,6 +1438,26 @@ export const VTuberCharts = ({ channels }: VTuberChartsProps) => {
           >
             Reset
           </button>
+          <div className="ml-auto flex items-center gap-3">
+            <label className="inline-flex items-center gap-2 text-sm text-gray-700">
+              <input
+                type="checkbox"
+                checked={tenureActivityFilter.active}
+                onChange={() => toggleTenureActivity('active')}
+                className="h-4 w-4 rounded border-gray-300 text-emerald-600 focus:ring-emerald-500"
+              />
+              Active
+            </label>
+            <label className="inline-flex items-center gap-2 text-sm text-gray-700">
+              <input
+                type="checkbox"
+                checked={tenureActivityFilter.inactive}
+                onChange={() => toggleTenureActivity('inactive')}
+                className="h-4 w-4 rounded border-gray-300 text-slate-600 focus:ring-slate-500"
+              />
+              Inactive
+            </label>
+          </div>
         </div>
         {filteredTenureData.length === 0 ? (
           <div className="flex h-[300px] items-center justify-center rounded border border-dashed border-gray-200 bg-gray-50 text-sm text-gray-500">
