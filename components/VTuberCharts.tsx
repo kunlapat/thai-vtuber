@@ -1126,7 +1126,7 @@ export const VTuberCharts = ({ channels }: VTuberChartsProps) => {
         )}
       </div>
       {/* Subscribers vs Views Scatter Plot */}
-      <div className="order-5 bg-white p-6 rounded-lg shadow-md border border-gray-200">
+      <div className="order-7 bg-white p-6 rounded-lg shadow-md border border-gray-200">
         <h3 className="text-lg font-semibold mb-4 text-gray-900">Subscribers vs Views Correlation</h3>
         <div className="mb-4">
           <div className="relative">
@@ -1246,7 +1246,7 @@ export const VTuberCharts = ({ channels }: VTuberChartsProps) => {
       </div>
 
       {/* Channel Tenure vs Performance */}
-      <div className="order-6 bg-white p-6 rounded-lg shadow-md border border-gray-200">
+      <div className="order-8 bg-white p-6 rounded-lg shadow-md border border-gray-200">
         <h3 className="text-lg font-semibold mb-2 text-gray-900">Channel Tenure vs Performance</h3>
         <p className="text-sm text-gray-600 mb-3">Channel age in years vs subscriber base, bubble size reflects total views</p>
         <div className="mb-4 flex flex-wrap items-center gap-3">
@@ -1446,7 +1446,7 @@ export const VTuberCharts = ({ channels }: VTuberChartsProps) => {
       </div>
 
       {/* Engagement Rate Distribution */}
-      <div className="order-8 bg-white p-6 rounded-lg shadow-md border border-gray-200">
+      <div className="order-9 bg-white p-6 rounded-lg shadow-md border border-gray-200">
         <div className="flex flex-col gap-4">
           <div>
             <h3 className="text-lg font-semibold text-gray-900">Engagement Rate Distribution</h3>
@@ -1534,7 +1534,7 @@ export const VTuberCharts = ({ channels }: VTuberChartsProps) => {
         </div>
       </div>
       {/* Active Share by Subscriber Tier */}
-      <div className="order-7 bg-white p-6 rounded-lg shadow-md border border-gray-200">
+      <div className="order-3 bg-white p-6 rounded-lg shadow-md border border-gray-200">
         <div className="flex flex-col gap-4">
           <div className="flex flex-col gap-2 md:flex-row md:items-center md:justify-between">
             <div>
@@ -1656,7 +1656,7 @@ export const VTuberCharts = ({ channels }: VTuberChartsProps) => {
       </div>
 
       {/* Top Channels Leaderboard */}
-      <div className="order-3 bg-white p-6 rounded-lg shadow-md border border-gray-200">
+      <div className="order-5 bg-white p-6 rounded-lg shadow-md border border-gray-200">
         <div className="flex flex-col gap-4">
           <div>
             <h3 className="text-lg font-semibold text-gray-900">Top Channels Leaderboard</h3>
@@ -1771,7 +1771,7 @@ export const VTuberCharts = ({ channels }: VTuberChartsProps) => {
       </div>
 
       {/* Growth Potential Analysis */}
-      <div className="order-9 bg-white p-6 rounded-lg shadow-md border border-gray-200">
+      <div className="order-6 bg-white p-6 rounded-lg shadow-md border border-gray-200">
         <h3 className="text-lg font-semibold mb-2 text-gray-900">Growth Potential Channels</h3>
         <p className="text-sm text-gray-600 mb-4">{growthSubtitle}</p>
 
